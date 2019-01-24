@@ -2582,3 +2582,14 @@ handle_data <- function(data02){
   list(data02[[1]], data02[[3]], data02[[2]], data02[[4]])
 }
 
+
+# Replace the parameter names slot of an object of class 'stanfit'.
+#
+# @param stanfit An object of class 'stanfit'.
+# @param new_nms A character vector of new parameter names.
+# @return A 'stanfit' object.
+replace_stanfit_nms <- function(stanfit, new_nms) {
+  stanfit@sim$fnames_oi <- new_nms
+  stanfit
+}
+

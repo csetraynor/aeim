@@ -764,6 +764,61 @@ idm_stan <- function(formula01,
     stanfit <- do.call(rstan::vb, args)
   }
 
+  check_stanfit(stanfit)
 
-  return(stanfit)
+  # define new parameter names
+  nms_beta   <- colnames(x) # may be NULL
+  nms_tde    <- get_smooth_name(s_cpts, type = "smooth_coefs") # may be NULL
+  nms_smooth <- get_smooth_name(s_cpts, type = "smooth_sd")    # may be NULL
+  nms_int    <- get_int_name_basehaz(basehaz)
+  nms_aux    <- get_aux_name_basehaz(basehaz)
+  nms_all    <- c(nms_int,
+                  nms_beta,
+                  nms_tde,
+                  nms_smooth,
+                  nms_aux,
+                  "log-posterior")
+
+  nms_all <- c("alpha01", "trt01", "aux01",
+               "alpha02", "trt02", "aux02",
+               "alpha12", "trt12", "aux12",
+               "log-posterior")
+
+
+  # substitute new parameter names into 'stanfit' object
+  stanfit <- replace_stanfit_nms(stanfit, nms_all)
+
+  # return an object of class 'stanidm'
+  fit <- nlist(stanfit,
+               formula,
+               has_tde,
+               has_quadrature,
+               data,
+               model_frame      = mf,
+               terms            = mt,
+               xlevels          = .getXlevels(mt, mf),
+               x,
+               s_cpts           = if (has_tde) s_cpts else NULL,
+               t_beg,
+               t_end,
+               status,
+               event            = as.logical(status == 1),
+               delayed,
+               basehaz,
+               nobs             = nrow(mf),
+               nevents          = nevent,
+               nlcens,
+               nrcens,
+               nicens,
+               ncensor          = nlcens + nrcens + nicens,
+               ndelayed         = ndelay,
+               prior_info,
+               qnodes           = if (has_quadrature) qnodes else NULL,
+               algorithm,
+               stan_function    = "stan_idm",
+               rstanarm_version = utils::packageVersion("rstanarm"),
+               call             = match.call(expand.dots = TRUE))
+
+
+  return(fit)
 }
