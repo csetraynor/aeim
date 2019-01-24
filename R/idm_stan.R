@@ -722,6 +722,8 @@ idm_stan <- function(formula01,
     basehaz = basehaz[[3]]
   )
 
+  prior_info <- list(prior_info01, prior_info02, prior_info12)
+
   #-----------
   # Fit model
   #-----------
@@ -767,58 +769,51 @@ idm_stan <- function(formula01,
   check_stanfit(stanfit)
 
   # define new parameter names
-  nms_beta   <- colnames(x) # may be NULL
-  nms_tde    <- get_smooth_name(s_cpts, type = "smooth_coefs") # may be NULL
-  nms_smooth <- get_smooth_name(s_cpts, type = "smooth_sd")    # may be NULL
-  nms_int    <- get_int_name_basehaz(basehaz)
-  nms_aux    <- get_aux_name_basehaz(basehaz)
-  nms_all    <- c(nms_int,
-                  nms_beta,
-                  nms_tde,
-                  nms_smooth,
-                  nms_aux,
-                  "log-posterior")
+#  nms_tde    <- get_smooth_name(s_cpts, type = "smooth_coefs") # may be NULL
+#  nms_smooth <- get_smooth_name(s_cpts, type = "smooth_sd")    # may be NULL
 
-  nms_all <- c("alpha01", "trt01", "aux01",
-               "alpha02", "trt02", "aux02",
-               "alpha12", "trt12", "aux12",
-               "log-posterior")
+  nms_all    <- nruapply(seq_along(1:h), function(i){
+    nms_beta   <- paste0(colnames(x[[i]]),"_",i )
+    nms_int    <- paste0(get_int_name_basehaz(basehaz[[i]]),"_",i )
+    nms_aux    <- paste0(get_aux_name_basehaz(basehaz[[i]]),"_",i )
+    c( nms_int, nms_beta, nms_aux)
+  })
 
-
+  nms_all <- c(nms_all, "log-posterior")
   # substitute new parameter names into 'stanfit' object
   stanfit <- replace_stanfit_nms(stanfit, nms_all)
 
   # return an object of class 'stanidm'
   fit <- nlist(stanfit,
                formula,
-               has_tde,
-               has_quadrature,
+              # has_tde,
+              # has_quadrature,
                data,
                model_frame      = mf,
                terms            = mt,
-               xlevels          = .getXlevels(mt, mf),
+               xlevels          = lapply(seq_along(1:h), function(i) .getXlevels(mt[[i]], mf[[i]]) ),
                x,
-               s_cpts           = if (has_tde) s_cpts else NULL,
+               #s_cpts           = if (has_tde) s_cpts else NULL,
                t_beg,
                t_end,
                status,
-               event            = as.logical(status == 1),
+               event            = lapply(seq_along(1:h), function(i) as.logical(status[[i]] == 1) ),
                delayed,
                basehaz,
-               nobs             = nrow(mf),
+               nobs             = lapply(seq_along(1:h), function(i) nrow(mf[[i]]) ),
                nevents          = nevent,
                nlcens,
                nrcens,
                nicens,
-               ncensor          = nlcens + nrcens + nicens,
+               ncensor          = lapply(seq_along(1:h), function(i) nlcens[[i]] + nrcens[[i]] + nicens[[i]]),
                ndelayed         = ndelay,
                prior_info,
-               qnodes           = if (has_quadrature) qnodes else NULL,
+             #  qnodes           = if (has_quadrature) qnodes else NULL,
                algorithm,
                stan_function    = "stan_idm",
                rstanarm_version = utils::packageVersion("rstanarm"),
                call             = match.call(expand.dots = TRUE))
 
 
-  return(fit)
+  idmstan(fit)
 }

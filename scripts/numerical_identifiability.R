@@ -49,9 +49,9 @@ stanfit <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
                      prior12           = rstanarm::normal(),
                      prior_intercept12 = rstanarm::normal(),
                      prior_aux12       = rstanarm::normal(),
-                    iter = 2000,
-                    chains = 4,
-                    control = list(adapt_delta = 0.99)
+                    iter = 1000,
+                    chains = 2,
+                    control = list(adapt_delta = 0.8)
 )
 
 
