@@ -309,6 +309,64 @@ loo.stanreg <-
     )
   }
 
+
+loo.stanidm <-
+  function(x,
+           ...,
+           cores = getOption("mc.cores", 1),
+           save_psis = FALSE,
+           k_threshold = NULL) {
+
+    if (!used.sampling(x))
+      STOP_sampling_only("loo")
+    if (model_has_weights(x))
+      recommend_exact_loo(reason = "model has weights")
+
+    user_threshold <- !is.null(k_threshold)
+    if (user_threshold) {
+      validate_k_threshold(k_threshold)
+    } else {
+      k_threshold <- 0.7
+    }
+
+    # chain_id to pass to loo::relative_eff
+    chain_id <- chain_id_for_loo(x)
+
+    args <- ll_args(x)
+    llfun <- ll_fun(x)
+    likfun <- function(data_i, draws) {
+      exp(llfun(data_i, draws))
+    }
+    r_eff <- loo::relative_eff(
+      # using function method
+      x = likfun,
+      chain_id = chain_id,
+      data = args$data,
+      draws = args$draws,
+      cores = cores,
+      ...
+    )
+    loo_x <- suppressWarnings(
+      loo.function(
+        llfun,
+        data = args$data,
+        draws = args$draws,
+        r_eff = r_eff,
+        ...,
+        cores = cores,
+        save_psis = save_psis
+      )
+    )
+
+
+
+
+
+
+
+}
+
+
 # WAIC
 #
 #' @rdname loo.stanreg

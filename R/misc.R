@@ -2251,6 +2251,13 @@ append_prefix_to_colnames <- function(x, str) {
   if (ncol(x)) set_colnames(x, paste0(str, colnames(x))) else x
 }
 
+# Append a string (prefix) to the column names of a matrix or array
+append_sufix_to_colnames <- function(x, str) {
+  if (ncol(x)) set_colnames(x, paste0(colnames(x), str)) else x
+}
+
+
+
 # Return the name of the calling function as a string
 get_calling_fun <- function(which = -2) {
   fn <- tryCatch(sys.call(which = which)[[1L]], error = function(e) NULL)

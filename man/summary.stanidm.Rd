@@ -12,7 +12,7 @@
 \method{print}{summary.idm}(x, digits = max(1, attr(x, "print.digits")),
   ...)
 
-\method{as.data.frame}{summary.stanreg}(x, ...)
+\method{as.data.frame}{summary.stanidm}(x, ...)
 }
 \arguments{
 \item{x}{An object of class \code{"summary.stanidm"}.}
