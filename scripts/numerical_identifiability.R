@@ -29,6 +29,8 @@ sim_wei <- rsimid(
   cens = cens
 )
 
+sim_wei$time_diff = sim_wei$os_time - sim_wei$df_time
+
 library(survival)
 library(rstan)
 rstan_options(auto_write = TRUE)

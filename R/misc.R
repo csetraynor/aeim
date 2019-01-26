@@ -96,6 +96,7 @@ is.stanreg   <- function(x) inherits(x, "stanreg")
 is.stansurv  <- function(x) inherits(x, "stansurv")
 is.stanmvreg <- function(x) inherits(x, "stanmvreg")
 is.stanjm    <- function(x) inherits(x, "stanjm")
+is.stanidm    <- function(x) inherits(x, "stanidm")
 
 # Test if object contains a specific type of submodel
 #
@@ -133,6 +134,14 @@ validate_stanjm_object <- function(x, call. = FALSE) {
 # @param x The object to test.
 validate_stansurv_object <- function(x, call. = FALSE) {
   if (!is.stansurv(x))
+    stop("Object is not a stansurv object.", call. = call.)
+}
+
+# Throw error if object isn't a idm object
+#
+# @param x The object to test.
+validate_stanidm_object <- function(x, call. = FALSE) {
+  if (!is.stanidm(x))
     stop("Object is not a stansurv object.", call. = call.)
 }
 
@@ -1432,6 +1441,39 @@ get_time_seq <- function(increments, t0, t1, simplify = TRUE) {
 extract_pars <- function(object, ...) {
   UseMethod("extract_pars")
 }
+
+extract_pars.stanidm <- function(object, stanmat = NULL, means = FALSE ){
+  validate_stanidm_object(object)
+  if (is.null(stanmat))
+    stanmat <- as.matrix(object$stanfit)
+  if (means)
+    stanmat <- t(colMeans(stanmat)) # return posterior means
+
+  lapply(seq_along(object$basehaz), function(h){
+    nms_beta <- paste0(colnames(object$x[[h]]), "_", h )
+    # nms_tde  <- get_smooth_name(object$s_cpts[[h]], type = "smooth_coefs")
+    # nms_smth <- get_smooth_name(object$s_cpts[[h]], type = "smooth_sd")
+    nms_tde <- NULL
+    nms_smth <- NULL
+
+    nms_int  <-  paste0(get_int_name_basehaz(object$basehaz[[h]]), "_", h )
+    nms_aux  <- paste0(get_aux_name_basehaz(object$basehaz[[h]]), "_", h )
+    alpha    <- stanmat[, nms_int,  drop = FALSE]
+    beta     <- stanmat[, nms_beta, drop = FALSE]
+    beta_tde <- stanmat[, nms_tde,  drop = FALSE]
+    aux      <- stanmat[, nms_aux,  drop = FALSE]
+    smooth   <- stanmat[, nms_smth, drop = FALSE]
+    stanmat <- do.call(cbind, list(alpha, beta, beta_tde, aux, smooth ) )
+    nlist(alpha, beta, beta_tde, aux, smooth, stanmat)
+  }
+    )
+}
+
+#' @export
+get_x.stanidm <- function(object, ...) {
+  object[["x"]] %ORifNULL% model.matrix(object)
+}
+
 
 extract_pars.stansurv <- function(object, stanmat = NULL, means = FALSE) {
   validate_stansurv_object(object)

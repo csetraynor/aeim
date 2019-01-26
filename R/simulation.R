@@ -92,7 +92,7 @@ rsimid <- function(dist01 = c("weibull", "exponential", "gompertz")  ,
   delta2[ind11] <- 1
   ret <- data.frame(cbind(id = ids, df_time = y1, df_event = delta1, os_time = y2, os_event = delta2))
   ret <- suppressMessages(dplyr::left_join(ret, x))
-  ret$time_diff <- ret$os_time - ret$df_time
+  #ret$time_diff <- ret$os_time - ret$df_time
   return(ret)
 }
 
