@@ -779,12 +779,12 @@ idm_stan <- function(formula01,
       nms_beta = NULL
     }
     if(has_intercept[[i]]){
-      nms_int    <- paste0(get_int_name_basehaz(basehaz[[i]]),"_",i )
+      nms_int    <- paste_i(get_int_name_basehaz(basehaz[[i]]), i)
     } else {
       nms_int = NULL
     }
     if(get_basehaz_name(basehaz[[i]]) != "exp"){
-      nms_aux    <- paste0(get_aux_name_basehaz(basehaz[[i]]),"_",i )
+      nms_aux    <- paste_i(get_aux_name_basehaz(basehaz[[i]]), i)
     } else {
       nms_aux = NULL
     }

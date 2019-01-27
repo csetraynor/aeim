@@ -100,30 +100,25 @@ stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
 )
 
 
+loo1 <- loo(stanfit, cores = 2, k_threshold = 0.7)
+loo2 <- loo(stanfit2, cores = 2, k_threshold = 0.7)
+loo3 <- loo(stanfit3, cores = 2, k_threshold = 0.7)
+compare_models(loo1, loo2, loo3)
 
 
-stanpars <- c(if (standata$has_intercept01) "alpha01",
-              if (standata$K01)             "beta01",
-              if (standata$nvars01)         "aux01",
-              if (standata$has_intercept02) "alpha02",
-              if (standata$K02)             "beta02",
-              if (standata$nvars02)         "aux02",
-              if (standata$has_intercept12) "alpha12",
-              if (standata$K12)             "beta12",
-              if (standata$nvars12)         "aux12")
 
-stanfile <-  "src/stan_files/MS.stan"
-library(rstan)
-rstan_options(auto_write = TRUE)
-options(mc.cores = 2)
-fit <- stan(file = stanfile,
-            data = standata,
-            pars = stanpars,
-            iter = 2000,
-            chains = 4,
-            control = list(adapt_delta = 0.99))
-s_elapsed <- sum(get_elapsed_time(fit))
+ps <- posterior_survfit(stanfit, standardise = TRUE,                      times = list(0,0,0), extrapolate = TRUE, control = list(edist = 5))
+ps2 <- posterior_survfit(stanfit2, extrapolate = TRUE, type = "surv")
+sps3 <- posterior_survfit(stanfit3, extrapolate = TRUE, type = "cumhaz")
 
+tt <- ps[[1]]
+plot(tt)
+
+for(i in 1:3){
+  cat("\n---\n")
+
+  print(ps[[i]])
+}
 
 print(fit)
 rstan::traceplot(fit, 'lp__')

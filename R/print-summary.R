@@ -33,21 +33,20 @@ print.stanidm <- function(x, digits = 3, ...) {
     coef_mat <- mat[, nms, drop = FALSE]
     estimates <- .median_and_madsd(coef_mat)
     if(has_intercept(x$basehaz[[i]])){
-      nms_int  <- paste0( get_int_name_basehaz(get_basehaz(x)[[i]]), "_", i)
+      nms_int  <- paste_i( get_int_name_basehaz(get_basehaz(x)[[i]]), i)
     } else {
       nms_int = NULL
     }
 
     if(get_basehaz_name(x$basehaz[[i]]) != "exp"){
-      nms_aux  <- paste0(get_aux_name_basehaz(get_basehaz(x)[[i]]), "_", i)
+      nms_aux  <- paste_i(get_aux_name_basehaz(get_basehaz(x)[[i]]), i)
     } else {
       nms_aux = NULL
     }
     if(ncol(get_x(x)[[i]]) > 0){
-      nms_beta <- paste0(
+      nms_beta <- paste_i(
         setdiff(gsub(paste0("_.") , "", rownames(estimates)),
-                gsub(paste0("_.") , "", c(nms_int, nms_aux)) ),
-        "_",i)
+                gsub(paste0("_.") , "", c(nms_int, nms_aux)) ), i)
     } else {
       nms_beta <- NULL
     }
@@ -71,7 +70,7 @@ print.stanidm <- function(x, digits = 3, ...) {
 #'
 #' Summaries of parameter estimates and MCMC convergence diagnostics
 #' (Monte Carlo error, effective sample size, Rhat).
-#'
+#' @rdname summary.stanidm
 #' @export
 #' @method summary stanidm
 summary.stanidm <- function(object, pars = NULL, regex_pars = NULL,

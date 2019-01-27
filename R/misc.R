@@ -145,6 +145,16 @@ validate_stanidm_object <- function(x, call. = FALSE) {
     stop("Object is not a stansurv object.", call. = call.)
 }
 
+# Throw error if object isn't a idm object
+#
+# @param x The object to test.
+handle_newdata <- function(object, newdata, call. = FALSE) {
+  if (all(seq_along(object$basehaz) != seq_along(newdata)))
+    stop("A new dataframe has to be provided for each transition.", call. = call.)
+}
+
+
+
 # Test for a given family
 #
 # @param x A character vector (probably x = family(fit)$family)
@@ -1450,14 +1460,28 @@ extract_pars.stanidm <- function(object, stanmat = NULL, means = FALSE ){
     stanmat <- t(colMeans(stanmat)) # return posterior means
 
   lapply(seq_along(object$basehaz), function(h){
-    nms_beta <- paste0(colnames(object$x[[h]]), "_", h )
     # nms_tde  <- get_smooth_name(object$s_cpts[[h]], type = "smooth_coefs")
     # nms_smth <- get_smooth_name(object$s_cpts[[h]], type = "smooth_sd")
     nms_tde <- NULL
     nms_smth <- NULL
 
-    nms_int  <-  paste0(get_int_name_basehaz(object$basehaz[[h]]), "_", h )
-    nms_aux  <- paste0(get_aux_name_basehaz(object$basehaz[[h]]), "_", h )
+    if(has_intercept(object$basehaz[[h]])){
+      nms_int  <- paste_i( get_int_name_basehaz(get_basehaz(object)[[h]]), h)
+    } else {
+      nms_int = NULL
+    }
+
+    if(get_basehaz_name(object$basehaz[[h]]) != "exp"){
+      nms_aux  <- paste_i(get_aux_name_basehaz(get_basehaz(object)[[h]]), h)
+    } else {
+      nms_aux = NULL
+    }
+    if(ncol(get_x(object)[[h]]) > 0){
+      nms_beta <- paste_i(colnames(object$x[[h]]), h)
+    } else {
+      nms_beta <- NULL
+    }
+
     alpha    <- stanmat[, nms_int,  drop = FALSE]
     beta     <- stanmat[, nms_beta, drop = FALSE]
     beta_tde <- stanmat[, nms_tde,  drop = FALSE]
@@ -2283,4 +2307,30 @@ append_sufix_to_colnames <- function(x, str) {
 get_calling_fun <- function(which = -2) {
   fn <- tryCatch(sys.call(which = which)[[1L]], error = function(e) NULL)
   if (!is.null(fn)) safe_deparse(fn) else NULL
+}
+
+
+paste_i <- function(x, i){
+  paste0(x,"_",i )
+}
+
+handle_last_time <- function(object, last_time){
+  if(is.null(last_time)){
+    last_time <- lapply(seq_along(object$basehaz), function(b) NULL)
+  } else {
+    if(all(seq_along(object$basehaz) != seq_along(last_time)))
+      stop2("last_time has to be provided for each transition")
+  }
+  last_time
+}
+
+
+handle_times <- function(object, times){
+  if(is.null(times)){
+    times <- lapply(seq_along(object$basehaz), function(b) NULL)
+  } else {
+    if(all(seq_along(object$basehaz) != seq_along(times)))
+      stop2("times have to be provided for each transition")
+  }
+  times
 }

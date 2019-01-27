@@ -58,14 +58,16 @@ idmstan <- function(object) {
     runtime <- get_runtime(object$stanfit) # run time (in mins)
   }
 
+  # NOT IMPLEMENTED QUADRATURE OR TDE.
+
   # return object of class 'stansurv'
   out <- nlist(
     coefficients  = coefs,
     ses           = ses,
     covmat        = covmat,
     formula       = object$formula,
-    has_tde       = object$has_tde,
-    has_quadrature= object$has_quadrature,
+    has_tde       = FALSE,
+    has_quadrature= FALSE,
     terms         = object$terms,
     data          = object$data,
     model_frame   = object$model_frame,
