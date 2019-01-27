@@ -57,6 +57,49 @@ stanfit <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
 )
 
 
+stanfit2 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
+                    formula02 = Surv(time=os_time,event=os_event)~trt,
+                    formula12 = Surv(time=time_diff,event=os_event)~trt,
+                    data = sim_wei,
+                    basehaz01 = "ms",
+                    basehaz02 = "ms",
+                    basehaz12 = "ms",
+                    prior01           = rstanarm::normal(),
+                    prior_intercept01 = rstanarm::normal(),
+                    prior_aux01       = rstanarm::normal(),
+                    prior02           = rstanarm::normal(),
+                    prior_intercept02 = rstanarm::normal(),
+                    prior_aux02       = rstanarm::normal(),
+                    prior12           = rstanarm::normal(),
+                    prior_intercept12 = rstanarm::normal(),
+                    prior_aux12       = rstanarm::normal(),
+                    iter = 1000,
+                    chains = 2,
+                    control = list(adapt_delta = 0.8)
+)
+
+stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
+                     formula02 = Surv(time=os_time,event=os_event)~trt,
+                     formula12 = Surv(time=time_diff,event=os_event)~trt,
+                     data = sim_wei,
+                     basehaz01 = "exp",
+                     basehaz02 = "exp",
+                     basehaz12 = "exp",
+                     prior01           = rstanarm::normal(),
+                     prior_intercept01 = rstanarm::normal(),
+                     prior_aux01       = rstanarm::normal(),
+                     prior02           = rstanarm::normal(),
+                     prior_intercept02 = rstanarm::normal(),
+                     prior_aux02       = rstanarm::normal(),
+                     prior12           = rstanarm::normal(),
+                     prior_intercept12 = rstanarm::normal(),
+                     prior_aux12       = rstanarm::normal(),
+                     iter = 1000,
+                     chains = 2,
+                     control = list(adapt_delta = 0.8)
+)
+
+
 
 
 stanpars <- c(if (standata$has_intercept01) "alpha01",

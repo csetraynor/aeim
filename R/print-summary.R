@@ -32,13 +32,31 @@ print.stanidm <- function(x, digits = 3, ...) {
     nms <- setdiff(nms, ppd_nms)
     coef_mat <- mat[, nms, drop = FALSE]
     estimates <- .median_and_madsd(coef_mat)
-    nms_int  <- paste0( get_int_name_basehaz(get_basehaz(x)[[i]]), "_", i)
-    nms_aux  <- paste0(get_aux_name_basehaz(get_basehaz(x)[[i]]), "_", i)
-    nms_beta <- setdiff(rownames(estimates), c(nms_int, nms_aux))
-    estimates <- cbind(estimates,
-                       "exp(Median)" = c(rep(NA, length(nms_int)),
-                                         exp(estimates[nms_beta, "Median"]),
-                                         rep(NA, length(nms_aux))))
+    if(has_intercept(x$basehaz[[i]])){
+      nms_int  <- paste0( get_int_name_basehaz(get_basehaz(x)[[i]]), "_", i)
+    } else {
+      nms_int = NULL
+    }
+
+    if(get_basehaz_name(x$basehaz[[i]]) != "exp"){
+      nms_aux  <- paste0(get_aux_name_basehaz(get_basehaz(x)[[i]]), "_", i)
+    } else {
+      nms_aux = NULL
+    }
+    if(ncol(get_x(x)[[i]]) > 0){
+      nms_beta <- paste0(
+        setdiff(gsub(paste0("_.") , "", rownames(estimates)),
+                gsub(paste0("_.") , "", c(nms_int, nms_aux)) ),
+        "_",i)
+    } else {
+      nms_beta <- NULL
+    }
+
+    estimates <- suppressWarnings(
+      cbind(estimates,
+            "exp(Median)" = c(rep(NA, length(nms_int)), exp(estimates[nms_beta, "Median"]), rep(NA, length(nms_aux)))
+            )
+    )
     .printfr(estimates, digits, ...)
 
   }
@@ -54,7 +72,6 @@ print.stanidm <- function(x, digits = 3, ...) {
 #' Summaries of parameter estimates and MCMC convergence diagnostics
 #' (Monte Carlo error, effective sample size, Rhat).
 #'
-#' @rdname summary.stanidm
 #' @export
 #' @method summary stanidm
 summary.stanidm <- function(object, pars = NULL, regex_pars = NULL,

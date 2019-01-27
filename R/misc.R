@@ -1469,7 +1469,28 @@ extract_pars.stanidm <- function(object, stanmat = NULL, means = FALSE ){
     )
 }
 
+#' Extract X, Y or Z from a stanreg object
+#'
+#' @keywords internal
 #' @export
+#' @templateVar stanregArg object
+#' @param ... Other arguments passed to methods. For a \code{stanmvreg} object
+#'   this can be an integer \code{m} specifying the submodel.
+#' @return For \code{get_x} and \code{get_z}, a matrix. For \code{get_y}, either
+#'   a vector or a matrix, depending on how the response variable was specified.
+get_y <- function(object, ...) UseMethod("get_y")
+#' @rdname get_y
+#' @export
+get_x <- function(object, ...) UseMethod("get_x")
+#' @rdname get_y
+#' @export
+get_z <- function(object, ...) UseMethod("get_z")
+
+#' @export
+get_y.stanidm <- function(object, ...) {
+  lapply(model.frame(object), function(m) model.response(m) )
+}
+
 get_x.stanidm <- function(object, ...) {
   object[["x"]] %ORifNULL% model.matrix(object)
 }

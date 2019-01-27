@@ -169,7 +169,7 @@
 #'
 #' @importFrom loo loo loo.function loo.matrix
 #'
-loo.stanreg <-
+loo.stanidm <-
   function(x,
            ...,
            cores = getOption("mc.cores", 1),
@@ -190,83 +190,17 @@ loo.stanreg <-
     # chain_id to pass to loo::relative_eff
     chain_id <- chain_id_for_loo(x)
 
-    if (is.stanjm(x)) {
-      ll <- log_lik(x)
-      r_eff <- loo::relative_eff(exp(ll), chain_id = chain_id, cores = cores)
-      loo_x <-
-        suppressWarnings(loo.matrix(
-          ll,
-          r_eff = r_eff,
-          cores = cores,
-          save_psis = save_psis
-        ))
-    } else if (is.stanmvreg(x)) {
-      M <- get_M(x)
-      ll <- do.call("cbind", lapply(1:M, function(m) log_lik(x, m = m)))
-      r_eff <- loo::relative_eff(exp(ll), chain_id = chain_id, cores = cores)
-      loo_x <-
-        suppressWarnings(loo.matrix(
-          ll,
-          r_eff = r_eff,
-          cores = cores,
-          save_psis = save_psis
-        ))
-    } else if (is_clogit(x)) {
-      ll <- log_lik.stanreg(x)
-      cons <- apply(ll, MARGIN = 2, FUN = function(y) sd(y) < 1e-15)
-      if (any(cons)) {
-        message(
-          "The following strata were dropped from the ",
-          "loo calculation because log-lik is constant: ",
-          paste(which(cons), collapse = ", ")
-        )
-        ll <- ll[,!cons, drop = FALSE]
-      }
-      r_eff <- loo::relative_eff(exp(ll), chain_id = chain_id, cores = cores)
-      loo_x <-
-        suppressWarnings(loo.matrix(
-          ll,
-          r_eff = r_eff,
-          cores = cores,
-          save_psis = save_psis
-        ))
-    } else if (is.stansurv(x) && x$has_quadrature) {
-      ll <- log_lik.stanreg(x)
-      r_eff <- loo::relative_eff(exp(ll), chain_id = chain_id, cores = cores)
-      loo_x <-
-        suppressWarnings(loo.matrix(
-          ll,
-          r_eff = r_eff,
-          cores = cores,
-          save_psis = save_psis
-        ))
-    } else {
-      args <- ll_args(x)
-      llfun <- ll_fun(x)
-      likfun <- function(data_i, draws) {
-        exp(llfun(data_i, draws))
-      }
-      r_eff <- loo::relative_eff(
-        # using function method
-        x = likfun,
-        chain_id = chain_id,
-        data = args$data,
-        draws = args$draws,
+    ll <- log_lik.stanidm(x)
+    r_eff <- loo::relative_eff(exp(ll),
+                               chain_id = chain_id,
+                               cores = cores)
+    loo_x <-
+      suppressWarnings(loo.matrix(
+        ll,
+        r_eff = r_eff,
         cores = cores,
-        ...
-      )
-      loo_x <- suppressWarnings(
-        loo.function(
-          llfun,
-          data = args$data,
-          draws = args$draws,
-          r_eff = r_eff,
-          ...,
-          cores = cores,
-          save_psis = save_psis
-        )
-      )
-    }
+        save_psis = save_psis
+      ))
 
     bad_obs <- loo::pareto_k_ids(loo_x, k_threshold)
     n_bad <- length(bad_obs)
@@ -299,97 +233,40 @@ loo.stanreg <-
       return(out)
     }
 
-    reloo_out <- reloo(x, loo_x, obs = bad_obs)
-    structure(
-      reloo_out,
-      name = attr(out, "name"),
-      discrete = attr(out, "discrete"),
-      yhash = attr(out, "yhash"),
-      formula = loo_model_formula(x)
-    )
+    return(out)
+
+    # reloo_out <- reloo(x, loo_x, obs = bad_obs)
+    # structure(
+    #   reloo_out,
+    #   name = attr(out, "name"),
+    #   discrete = attr(out, "discrete"),
+    #   yhash = attr(out, "yhash"),
+    #   formula = loo_model_formula(x)
+    # )
+    #
+    # structure(
+    #   reloo_out,
+    #   name = attr(out, "name"),
+    #   discrete = attr(out, "discrete"),
+    #   yhash = attr(out, "yhash"),
+    #   formula = loo_model_formula(x)
+    # )
+
   }
-
-
-loo.stanidm <-
-  function(x,
-           ...,
-           cores = getOption("mc.cores", 1),
-           save_psis = FALSE,
-           k_threshold = NULL) {
-
-    if (!used.sampling(x))
-      STOP_sampling_only("loo")
-    if (model_has_weights(x))
-      recommend_exact_loo(reason = "model has weights")
-
-    user_threshold <- !is.null(k_threshold)
-    if (user_threshold) {
-      validate_k_threshold(k_threshold)
-    } else {
-      k_threshold <- 0.7
-    }
-
-    # chain_id to pass to loo::relative_eff
-    chain_id <- chain_id_for_loo(x)
-
-    args <- ll_args(x)
-    llfun <- ll_fun(x)
-    likfun <- function(data_i, draws) {
-      exp(llfun(data_i, draws))
-    }
-    r_eff <- loo::relative_eff(
-      # using function method
-      x = likfun,
-      chain_id = chain_id,
-      data = args$data,
-      draws = args$draws,
-      cores = cores,
-      ...
-    )
-    loo_x <- suppressWarnings(
-      loo.function(
-        llfun,
-        data = args$data,
-        draws = args$draws,
-        r_eff = r_eff,
-        ...,
-        cores = cores,
-        save_psis = save_psis
-      )
-    )
-
-
-
-
-
-
-
-}
 
 
 # WAIC
 #
-#' @rdname loo.stanreg
+#' @rdname loo.stanidm
 #' @export
 #' @importFrom loo waic waic.function waic.matrix
 #'
-waic.stanreg <- function(x, ...) {
+waic.stanidm <- function(x, ...) {
   if (!used.sampling(x))
     STOP_sampling_only("waic")
-  if (is.stanjm(x)) {
-    out <- waic.matrix(log_lik(x))
-  } else if (is.stanmvreg(x)) {
-    M <- get_M(x)
-    ll <- do.call("cbind", lapply(1:M, function(m) log_lik(x, m = m)))
-    out <- waic.matrix(ll)
-  } else if (is_clogit(x)) {
-    out <- waic.matrix(log_lik(x))
-  } else if (is.stansurv(x) && x$has_quadrature) {
-    out <- waic.matrix(log_lik(x))
-  } else {
-    args <- ll_args(x)
-    out <- waic.function(ll_fun(x), data = args$data, draws = args$draws)
-  }
+
+  out <- waic.matrix(log_lik(x))
+
   structure(out,
             class = c("waic", "loo"),
             name = deparse(substitute(x)),
@@ -401,7 +278,7 @@ waic.stanreg <- function(x, ...) {
 
 # K-fold CV
 #
-#' @rdname loo.stanreg
+#' @rdname loo.stanidm
 #' @export
 #' @param K For \code{kfold}, the number of subsets (folds)
 #'   into which the data will be partitioned for performing
@@ -551,7 +428,7 @@ print.kfold <- function(x, digits = 1, ...) {
 }
 
 
-#' @rdname loo.stanreg
+#' @rdname loo.stanidm
 #' @export
 #'
 #' @param loos For \code{compare_models}, a list of two or more objects returned
@@ -643,7 +520,7 @@ print.compare_rstanarm_loos <- function(x, ...) {
 }
 
 
-#' @rdname loo.stanreg
+#' @rdname loo.stanidm
 #' @aliases loo_model_weights
 #'
 #' @importFrom loo loo_model_weights
@@ -668,7 +545,7 @@ loo_model_weights.stanreg_list <-
     loo_list <- vector(mode = "list", length = length(x))
     for (j in seq_along(x)) {
       loo_list[[j]] <-
-        loo.stanreg(x[[j]], cores = cores, k_threshold = k_threshold)
+        loo.stanidm(x[[j]], cores = cores, k_threshold = k_threshold)
     }
     wts <- loo::loo_model_weights.default(x = loo_list, ...)
     setNames(wts, names(x))
@@ -880,10 +757,12 @@ kfold_and_reloo_data <- function(x) {
 hash_y <- function(x, ...) {
   if (!requireNamespace("digest", quietly = TRUE))
     stop("Please install the 'digest' package.")
-  validate_stanreg_object(x)
+  validate_stanidm_object(x)
   y <- get_y(x)
-  attributes(y) <- NULL
-  digest::sha1(x = y, ...)
+  for(i in seq_along(y)){
+    attributes(y[[i]]) <- NULL
+  }
+  digest::sha1(x = ulist(y), ...)
 }
 
 # check if discrete or continuous
@@ -892,6 +771,8 @@ is_discrete <- function(object) {
   if (inherits(object, "polr"))
     return(TRUE)
   if (inherits(object, "stansurv"))
+    return(FALSE)
+  if (inherits(object, "stanidm"))
     return(FALSE)
   if (inherits(object, "stanmvreg")) {
     fams <- fetch(family(object), "family")

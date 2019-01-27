@@ -65,7 +65,7 @@
 #'  all.equal(ncol(ll2), nrow(nd))
 #' }
 #'
-log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
+log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, m = NULL, ...) {
   if (!used.sampling(object))
     STOP_sampling_only("Pointwise log-likelihood matrix")
   newdata <- validate_newdata(newdata)
@@ -74,13 +74,9 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
 
   if (is.stansurv(object)) {
     args <- ll_args.stansurv(object, newdata = newdata, ...)
-  } else if(is.stanidm(obj)) {
+  } else {
     args <- ll_args.stanidm(object, newdata = newdata, ...)
-    } else {
-    args <- ll_args.stanreg(object, newdata = newdata, offset = offset,
-                            reloo_or_kfold = calling_fun %in% c("kfold", "reloo"),
-                            ...)
-  }
+    }
 
   fun <- ll_fun(object, m = m)
   if (is.stansurv(object)) {
@@ -103,7 +99,7 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
         args_n = lapply(args , function(x) x[[n]] )
         draws_n = lapply(args$draws , function(x) x[[n]] )
         args_n$draws = draws_n
-        out[[i]] <- vapply(
+        out[[n]] <- vapply(
           seq_len(args_n$N),
           FUN.VALUE = numeric(length = args_n$S),
           FUN = function(i) {
@@ -114,6 +110,7 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
             ))
           })
       }
+    out <- do.call(cbind, out)
   } else {
     out <- vapply(
       seq_len(args$N),
@@ -126,17 +123,16 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
       FUN.VALUE = numeric(length = args$S)
     )
   }
+
   if (is.null(newdata)) {
     if(is.stanidm(object)) {
-      lapply(seq_along(out), function(i){
-        colnames(out[[i]]) <- rownames(model.frame(object, m = m[[i]]))
-      })
+      colnames(out) <- uapply(object$x, function(x) rownames(x))
     } else {
       colnames(out) <- rownames(model.frame(object, m = m))
     }
   } else {
     if(is.stanidm(object)){
-
+      colnames(out) <- uapply(newdata, function(x) rownames(x))
     } else {
       colnames(out) <- rownames(newdata)
     }
@@ -144,17 +140,17 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, ...) {
   return(out)
 }
 
-#' @rdname log_lik.stanreg
+#' @rdname log_lik.stanidm
 #' @export
 #' @templateVar mArg m
 #'
 log_lik.stanmvreg <- function(object, m = 1, newdata = NULL, ...) {
   validate_stanmvreg_object(object)
-  out <- log_lik.stanreg(object, newdata = newdata, m = m, ...)
+  out <- log_lik.stanidm(object, newdata = newdata, m = m, ...)
   return(out)
 }
 
-#' @rdname log_lik.stanreg
+#' @rdname log_lik.stanidm
 #' @export
 #' @param newdataLong,newdataEvent Optional data frames containing new data
 #'   (e.g. holdout data) to use when evaluating the log-likelihood for a
@@ -230,174 +226,6 @@ ll_fun <- function(x, m = NULL) {
 # @return a named list with elements data, draws, S (posterior sample size) and
 #   N = number of observations
 ll_args <- function(object, ...) UseMethod("ll_args")
-
-#--- ll_args for stanreg models
-ll_args.stanreg <- function(object, newdata = NULL, offset = NULL, m = NULL,
-                            reloo_or_kfold = FALSE, ...) {
-  validate_stanidm_object(object)
-  f <- family(object, m = m)
-  draws <- nlist(f)
-  has_newdata <- !is.null(newdata)
-
-  dots <- list(...)
-
-  z_betareg <- NULL
-  if (has_newdata && reloo_or_kfold && !is.mer(object)) {
-    x <- dots$newx
-    z_betareg <- dots$newz # NULL except for some stan_betareg models
-    if (!is.null(z_betareg)) {
-      z_betareg <- as.matrix(z_betareg)
-    }
-    stanmat <- dots$stanmat
-    form <- as.formula(formula(object)) # in case formula is string
-    y <- eval(form[[2L]], newdata)
-  } else if (has_newdata) {
-    ppdat <- pp_data(object, as.data.frame(newdata), offset = offset, m = m)
-    pp_eta_dat <- pp_eta(object, ppdat, m = m)
-    eta <- pp_eta_dat$eta
-    stanmat <- pp_eta_dat$stanmat
-    z_betareg <- ppdat$z_betareg
-    x <- ppdat$x
-    form <- as.formula(formula(object, m = m))
-    y <- eval(form[[2L]], newdata)
-  } else {
-    stanmat <- as.matrix.stanreg(object)
-    x <- get_x(object, m = m)
-    y <- get_y(object, m = m)
-  }
-  if (is.stanmvreg(object) && !is.null(dots$stanmat)) {
-    stanmat <- dots$stanmat # potentially use a stanmat with a single draw
-  }
-
-  if (!is_polr(object)) { # not polr or scobit model
-    fname <- f$family
-    if (is.nlmer(object)) {
-      draws <- list(mu = posterior_linpred(object, newdata = newdata),
-                    sigma = stanmat[,"sigma"])
-      data <- data.frame(y)
-      data$offset <- if (has_newdata) offset else object$offset
-      if (model_has_weights(object)) {
-        data$weights <- object$weights
-      }
-      data$i_ <- seq_len(nrow(data))  # for nlmer need access to i inside .ll_nlmer_i
-      return(nlist(data, draws, S = NROW(draws$mu), N = nrow(data)))
-
-    } else if (!is.binomial(fname)) {
-      data <- data.frame(y, x)
-      if (!is.null(z_betareg)) {
-        data <- cbind(data, z_betareg)
-      }
-    } else {
-      if (NCOL(y) == 2L) {
-        trials <- rowSums(y)
-        y <- y[, 1L]
-      } else if (is_clogit(object)) {
-        if (has_newdata) strata <- eval(object$call$strata, newdata)
-        else strata <- model.frame(object)[,"(weights)"]
-        strata <- as.factor(strata)
-        successes <- aggregate(y, by = list(strata), FUN = sum)$x
-        formals(draws$f$linkinv)$g <- strata
-        formals(draws$f$linkinv)$successes <- successes
-        trials <- 1L
-      } else {
-        trials <- 1
-        if (is.factor(y))
-          y <- fac2bin(y)
-        stopifnot(all(y %in% c(0, 1)))
-      }
-      data <- data.frame(y, trials, x)
-    }
-    nms <- if (is.stanmvreg(object))
-      collect_nms(colnames(stanmat),
-                  M = get_M(object),
-                  stub = get_stub(object)) else NULL
-    beta_sel <- if (is.null(nms)) seq_len(ncol(x)) else nms$y[[m]]
-    draws$beta <- stanmat[, beta_sel, drop = FALSE]
-    m_stub <- get_m_stub(m, stub = get_stub(object))
-    if (is.gaussian(fname))
-      draws$sigma <- stanmat[, paste0(m_stub, "sigma")]
-    if (is.gamma(fname))
-      draws$shape <- stanmat[, paste0(m_stub, "shape")]
-    if (is.ig(fname))
-      draws$lambda <- stanmat[, paste0(m_stub, "lambda")]
-    if (is.nb(fname))
-      draws$size <- stanmat[, paste0(m_stub, "reciprocal_dispersion")]
-    if (is.beta(fname)) {
-      draws$f_phi <- object$family_phi
-      z_vars <- colnames(stanmat)[grepl("(phi)", colnames(stanmat))]
-      if (length(z_vars) == 1 && z_vars == "(phi)") {
-        draws$phi <- stanmat[, z_vars]
-      } else {
-        if (has_newdata) {
-          if (!is.null(z_betareg)) {
-          colnames(data) <- c("y", colnames(get_x(object)),
-                              paste0("(phi)_", colnames(z_betareg)))
-          }
-        } else {
-          x_dat <- get_x(object)
-          z_dat <- as.matrix(object$z)
-          colnames(x_dat) <- colnames(x_dat)
-          colnames(z_dat) <- paste0("(phi)_", colnames(z_dat))
-          data <- data.frame(y = get_y(object), cbind(x_dat, z_dat), check.names = FALSE)
-        }
-        draws$phi <- stanmat[,z_vars]
-      }
-    }
-  } else {
-    stopifnot(is_polr(object))
-    y <- as.integer(y)
-    if (has_newdata) {
-      x <- .validate_polr_x(object, x)
-    }
-    data <- data.frame(y, x)
-    draws$beta <- stanmat[, colnames(x), drop = FALSE]
-    patt <- if (length(unique(y)) == 2L) "(Intercept)" else "|"
-    zetas <- grep(patt, colnames(stanmat), fixed = TRUE, value = TRUE)
-    draws$zeta <- stanmat[, zetas, drop = FALSE]
-    draws$max_y <- max(y)
-    if ("alpha" %in% colnames(stanmat)) {
-      stopifnot(is_scobit(object))
-      # scobit
-      draws$alpha <- stanmat[, "alpha"]
-      draws$f <- object$method
-    }
-  }
-
-  data$offset <- if (has_newdata) offset else object$offset
-  if (model_has_weights(object)) {
-    if (is.stanmvreg(object))
-      STOP_if_stanmvreg("posterior_survfit with weights")
-    data$weights <- object$weights
-  }
-
-  if (is.mer(object)) {
-    b_sel <- if (is.null(nms)) b_names(colnames(stanmat)) else nms$y_b[[m]]
-    b <- stanmat[, b_sel, drop = FALSE]
-    if (has_newdata) {
-      Z_names <- ppdat$Z_names
-      if (is.null(Z_names)) {
-        b <- b[, !grepl("_NEW_", colnames(b), fixed = TRUE), drop = FALSE]
-      } else {
-        b <- pp_b_ord(b, Z_names)
-      }
-      if (is.null(ppdat$Zt)) z <- matrix(NA, nrow = nrow(x), ncol = 0)
-      else z <- t(ppdat$Zt)
-    } else {
-      z <- get_z(object, m = m)
-    }
-    data <- cbind(data, as.matrix(z)[1:NROW(x),, drop = FALSE])
-    draws$beta <- cbind(draws$beta, b)
-  }
-
-  if (is_clogit(object)) {
-    data$strata <- strata
-    out <- nlist(data, draws, S = NROW(draws$beta), N = nlevels(strata))
-  } else {
-    out <- nlist(data, draws, S = NROW(draws$beta), N = nrow(data))
-  }
-  return(out)
-}
-
 
 #--- ll_args for stanidm models
 ll_args.stanidm <- function(object, newdata = NULL, ...) {

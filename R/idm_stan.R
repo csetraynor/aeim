@@ -773,9 +773,21 @@ idm_stan <- function(formula01,
 #  nms_smooth <- get_smooth_name(s_cpts, type = "smooth_sd")    # may be NULL
 
   nms_all    <- nruapply(seq_along(1:h), function(i){
-    nms_beta   <- paste0(colnames(x[[i]]),"_",i )
-    nms_int    <- paste0(get_int_name_basehaz(basehaz[[i]]),"_",i )
-    nms_aux    <- paste0(get_aux_name_basehaz(basehaz[[i]]),"_",i )
+    if(K[[i]] > 0){
+      nms_beta   <- paste0(colnames(x[[i]]),"_",i )
+    } else {
+      nms_beta = NULL
+    }
+    if(has_intercept[[i]]){
+      nms_int    <- paste0(get_int_name_basehaz(basehaz[[i]]),"_",i )
+    } else {
+      nms_int = NULL
+    }
+    if(get_basehaz_name(basehaz[[i]]) != "exp"){
+      nms_aux    <- paste0(get_aux_name_basehaz(basehaz[[i]]),"_",i )
+    } else {
+      nms_aux = NULL
+    }
     c( nms_int, nms_beta, nms_aux)
   })
 
