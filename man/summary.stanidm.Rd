@@ -9,7 +9,7 @@
 \method{summary}{stanidm}(object, pars = NULL, regex_pars = NULL,
   probs = NULL, ..., digits = 1)
 
-\method{print}{summary.idm}(x, digits = max(1, attr(x, "print.digits")),
+\method{print}{summary.idm}(x, digits = max(2, attr(x, "print.digits")),
   ...)
 
 \method{as.data.frame}{summary.stanidm}(x, ...)

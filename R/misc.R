@@ -2334,3 +2334,8 @@ handle_times <- function(object, times){
   }
   times
 }
+
+
+handle_labels <- function(x){
+  paste0("Transition_", seq_along(x))
+}

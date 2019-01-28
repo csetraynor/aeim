@@ -3,12 +3,15 @@
 \name{print.survfit.stansurv}
 \alias{print.survfit.stansurv}
 \alias{print.survfit.stanjm}
+\alias{print.fit.stanidm}
 \title{Generic print method for \code{survfit.stansurv} and \code{survfit.stanjm}
 objects}
 \usage{
 \method{print}{survfit.stansurv}(x, digits = 4, ...)
 
 \method{print}{survfit.stanjm}(x, digits = 4, ...)
+
+\method{print}{survfit.stanjm}(x, labels)
 }
 \arguments{
 \item{x}{An object of class \code{survfit.stansurv} or \code{survfit.stanjm},

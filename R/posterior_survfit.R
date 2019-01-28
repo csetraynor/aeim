@@ -303,14 +303,14 @@
 #'   plot(ps4)
 #' }
 #'
-posterior_survfit <- function(object, ...) UseMethod("posterior_survfit")
+posterior_fit <- function(object, ...) UseMethod("posterior_fit")
 
 
-#' @rdname posterior_survfit
+#' @rdname posterior_fit
 #' @method posterior_survfit stanidm
 #' @export
 #'
-posterior_survfit.stanidm <- function(object,
+posterior_fit.stanidm <- function(object,
                                        newdata     = NULL,
                                        type        = "surv",
                                        extrapolate = TRUE,
@@ -498,7 +498,10 @@ posterior_survfit.stanidm <- function(object,
               class       = c("survfit.stansurv", "data.frame"))
 
   }
-  return(out)
+  structure(out,
+            seed        = seed,
+            class       = c("fit.stanidm", "list" )
+            )
 }
 
 # -----------------  internal  ------------------------------------------------
@@ -703,7 +706,7 @@ extrapolation_control <-
 #' Generic print method for \code{survfit.stansurv} and \code{survfit.stanjm}
 #' objects
 #'
-#' @rdname print.survfit.stansurv
+#' @rdname print.fit.stanidm
 #' @method print survfit.stansurv
 #' @keywords internal
 #' @export
@@ -720,7 +723,7 @@ print.survfit.stansurv <- function(x, digits = 4, ...) {
   for (i in sel)
     x[[i]] <- format(round(x[[i]], digits), nsmall = digits)
 
-  cat("stan_surv predictions\n")
+
   cat(" num. individuals:", length(attr(x, "ids")), "\n")
   cat(" prediction type: ", tolower(get_survpred_name(attr(x, "type"))), "\n")
   cat(" standardised?:   ", yes_no_string(attr(x, "standardise")), "\n\n")
@@ -728,7 +731,9 @@ print.survfit.stansurv <- function(x, digits = 4, ...) {
   invisible(x)
 }
 
-#' @rdname print.survfit.stansurv
+
+
+#' @rdname print.fit.stanidm
 #' @method print survfit.stanjm
 #' @export
 #'
@@ -746,6 +751,24 @@ print.survfit.stanjm <- function(x, digits = 4, ...) {
   print(x, quote = FALSE)
   invisible(x)
 }
+
+#' @rdname print.fit.stanidm
+#' @method print survfit.stanjm
+#' @export
+#'
+print.fit.stanidm <- function(x, labels) {
+  if(missing(labels)){
+    labels <- handle_labels(x)
+  }
+
+  cat("stan_idm predictions\n")
+  for(h in seq_along(x)){
+    cat("\n ----------------- \n")
+    cat(" ", labels[h], "\n" )
+    print.survfit.stansurv(x[[h]])
+  }
+}
+
 
 
 # -----------------  plot methods  --------------------------------------------
@@ -905,7 +928,6 @@ plot.survfit.stanjm <- function(x,
   gg
 }
 
-
 #' @rdname plot.survfit.stanjm
 #' @method plot survfit.stansurv
 #' @export
@@ -922,6 +944,29 @@ plot.survfit.stansurv <- function(x,
   ret <- eval(mc)
   class(ret)[[1L]] <- "plot.survfit.stansurv"
   ret
+}
+
+#'  Plot method for stanidm
+#'  -------------------------------------------
+#'
+#'  Plot the estimated subject-specific or marginal
+#'  survival function for each transition hazard
+#'
+#' @rdname plot.fit.stanidm
+#' @method plot survfit.stansurv
+#' @export
+#'
+plot.fit.stanidm <- function(object, ...) {
+
+  dots <- list(...)
+
+  plotlist <- lapply(seq_along(object), function(i)
+    plot.survfit.stansurv(x = object[[i]],
+                          ... = dots
+                     )
+    )
+  out <- cowplot::plot_grid(plotlist  = plotlist)
+  out
 }
 
 

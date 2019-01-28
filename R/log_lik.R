@@ -336,7 +336,7 @@ ll_args.stansurv <- function(object, newdata = NULL, ...) {
   pp <- pp_data(object, newdata, times = t_end)
 
   # returned object depends on quadrature
-  if (object$has_quadrature) {
+  if (object$has_quadrature[[1]]) { # NOT IMPLEMENTED
     pp_qpts_beg <- pp_data(object, newdata, times = t_beg, at_quadpoints = TRUE)
     pp_qpts_end <- pp_data(object, newdata, times = t_end, at_quadpoints = TRUE)
     pp_qpts_upp <- pp_data(object, newdata, times = t_upp, at_quadpoints = TRUE)

@@ -1,3 +1,5 @@
+roxygen2::roxygenise(clean = TRUE)
+
 betas01_t = c(trt = -0.2)
 betas02_t = c(trt =-0.4)
 betas12_t = c(trt =-0.5)
@@ -107,18 +109,14 @@ compare_models(loo1, loo2, loo3)
 
 
 
-ps <- posterior_survfit(stanfit, standardise = TRUE,                      times = list(0,0,0), extrapolate = TRUE, control = list(edist = 5))
-ps2 <- posterior_survfit(stanfit2, extrapolate = TRUE, type = "surv")
-sps3 <- posterior_survfit(stanfit3, extrapolate = TRUE, type = "cumhaz")
+ps <- posterior_fit(stanfit, standardise = TRUE,  times = list(0,0,0), extrapolate = TRUE, control = list(edist = 5))
+ps2 <- posterior_fit(stanfit2, extrapolate = TRUE, type = "haz")
+ps2 <- posterior_fit(stanfit2, extrapolate = TRUE, type = "surv")
+sps3 <- posterior_fit(stanfit3, extrapolate = TRUE, type = "cumhaz")
 
 tt <- ps[[1]]
 plot(tt)
 
-for(i in 1:3){
-  cat("\n---\n")
-
-  print(ps[[i]])
-}
 
 print(fit)
 rstan::traceplot(fit, 'lp__')

@@ -197,7 +197,7 @@ summary.stanidm <- function(object, pars = NULL, regex_pars = NULL,
 #' @method print summary.idm
 #'
 #' @param x An object of class \code{"summary.stanidm"}.
-print.summary.stanidm <- function(x, digits = max(1, attr(x, "print.digits")),
+print.summary.stanidm <- function(x, digits = max(2, attr(x, "print.digits")),
                                   ...) {
   atts <- attributes(x)
   cat("\nModel Info:\n")
@@ -240,7 +240,7 @@ print.summary.stanidm <- function(x, digits = max(1, attr(x, "print.digits")),
     n_eff <- format(x[, "n_eff", drop = FALSE], drop0trailing = TRUE)
     print(cbind(mcse_rhat, n_eff), quote = FALSE)
     cat("\nNote: Covariates are arranged in order of transition number, 1->3.\n")
-    cat("\nFor each parameter, mcse is Monte Carlo standard error, ",
+    cat("\nFor each parameter, mcse is the Monte Carlo standard error, ",
         "n_eff is a crude measure of effective sample size, ",
         "and Rhat is the potential scale reduction factor on split chains",
         " (at convergence Rhat=1).\n", sep = '')
