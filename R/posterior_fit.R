@@ -322,6 +322,7 @@ posterior_fit.stanidm <- function(object,
                                   standardise = FALSE,
                                   draws       = NULL,
                                   seed        = NULL,
+                                  ids = NULL,
                                   ...) {
 
   validate_stanidm_object(object)
@@ -384,7 +385,7 @@ posterior_fit.stanidm <- function(object,
       } else if (any(!is.numeric(last_time_h), !length(last_time_h) == nrow(newdata_h))) {
         stop("Bug found: could not reconcile 'last_time' argument.")
       }
-      names(last_time_h) <- as.character(id_list_h)
+      names(last_time_h) <- as.character(id_list)
     }
 
     # Prediction times

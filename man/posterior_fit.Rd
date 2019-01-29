@@ -10,7 +10,7 @@ posterior_fit(object, ...)
 \method{posterior_survfit}{stanidm}(object, newdata = NULL,
   type = "surv", extrapolate = TRUE, control = list(),
   condition = NULL, last_time = NULL, prob = 0.95, times = NULL,
-  standardise = FALSE, draws = NULL, seed = NULL, ...)
+  standardise = FALSE, draws = NULL, seed = NULL, ids = NULL, ...)
 }
 \arguments{
 \item{...}{Currently unused.}
@@ -125,6 +125,12 @@ size of the posterior sample if that is less than 200.}
 
 \item{seed}{An optional \code{\link[=set.seed]{seed}} to use.}
 
+\item{ids}{An optional vector specifying a subset of IDs for whom the
+predictions should be obtained. The default is to predict for all individuals
+who were used in estimating the model or, if \code{newdataLong} and
+\code{newdataEvent} are specified, then all individuals contained in
+the new data.}
+
 \item{newdataLong, newdataEvent}{Optionally, a data frame (or in the case of
 \code{newdataLong} this can be a list of data frames) in which to look
 for variables with which to predict. If omitted, the model matrices are used.
@@ -140,12 +146,6 @@ individuals -- see the description for the \code{last_time} argument below
 is of course assumed that all individuals in \code{newdataEvent} have not
 yet experienced the event (that is, any variable in \code{newdataEvent} that
 corresponds to the event indicator will be ignored).}
-
-\item{ids}{An optional vector specifying a subset of IDs for whom the
-predictions should be obtained. The default is to predict for all individuals
-who were used in estimating the model or, if \code{newdataLong} and
-\code{newdataEvent} are specified, then all individuals contained in
-the new data.}
 
 \item{dynamic}{A logical that is only relevant if new data is provided
 via the \code{newdataLong} and \code{newdataEvent} arguments. If

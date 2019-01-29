@@ -15,7 +15,6 @@
   ###         M: number of replications
   ###      Output:
   ###         M simulated path in the muti-state model in the desired output format
-
   ###
   ### Set up
   output <- match.arg(output)
@@ -23,7 +22,6 @@
   K <- dim(trans)[1]
   trans2 <- to.trans2(trans)
   ntrans <- nrow(trans2)
-
   if (length(history$state)==1) history$state <- rep(history$state,M)
   if (length(history$time)==1) history$time <- rep(history$time,M)
   if (length(history$state)!=length(history$time)) stop("lengths of history$state and history$time differ")
@@ -36,14 +34,14 @@
   if (!is.null(beta.state))
     if (any(dim(beta.state) != c(K,ntrans)))
       stop("incorrect dimension of beta.state")
-  if (output=="state") {
-    # to contain sum
+  if (output=="state") # to contain sum
     res <- matrix(0, length(tvec), K)
-  } else if (output=="path") {# to contain sum
+  else if (output=="path") {# to contain sum
     thepaths <- paths(trans)
     L <- nrow(thepaths)
     res <- matrix(0, length(tvec), L)
-  } else res <- NULL
+  }
+  else res <- NULL
   for (m in 1:M) {
     if (!is.null(history$tstate))
       res1 <- mssample1(Haz, trans, history=list(state=history$state[m],
@@ -80,21 +78,20 @@
   return(res)
 }
 
-#------------- Internal
-###
-###     Function to sample a single path in the multi-state model
-###     Used internally in function mssample and msboot
-###
-### First sample (once) from censoring distribution, this will be the follow-up time
 `mssample1` <- function(Haz, trans, history, beta.state, clock, output, tvec, cens)
 {
-
+  ###
+  ###     Function to sample a single path in the multi-state model
+  ###     Used internally in function mssample and msboot
+  ###
+  ### First sample (once) from censoring distribution, this will be the follow-up time
   if (!is.null(cens)) {
     pcens <- diff(c(0,1-cens$surv))
     idx <- sample(1:length(cens$time), size=1, prob=pcens)
     fut <- cens$time[idx]
     censtime <- list(time=fut, jump=ifelse(idx>1,cens$Haz[idx]-cens$Haz[idx-1],cens$Haz[idx]))
-  } else censtime <- NULL
+  }
+  else censtime <- NULL
   K <- dim(trans)[1]
   trans2 <- to.trans2(trans)
   from <- to <- history$state
@@ -118,7 +115,7 @@
 
     if (ntr!=0 ) { # if not yet in absorbing state
       transnos <- transs
-      for (tr in seq_along(1:ntr))
+      for (tr in 1:ntr)
         Haz$Haz[Haz$trans==transnos[tr]] <-
           exp(sum(beta.state[,transnos[tr]]*tstates)) *
           Haz$Haz[Haz$trans==transnos[tr]]
@@ -253,7 +250,6 @@
   p <- c(p, exp(-Haz$Haz[nrow(Haz)])) # add probability of sampling time=Inf
   return(sample(c(Haz$time, Inf), size=size, prob=p, replace=replace))
 }
-
 
 `NAfix` <- function(x, subst=-Inf) {
   ### Written by Christian Hoffmann; propagate last known non-NA value
