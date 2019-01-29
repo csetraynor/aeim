@@ -70,7 +70,6 @@ print.stanidm <- function(x, digits = 3, ...) {
 #'
 #' Summaries of parameter estimates and MCMC convergence diagnostics
 #' (Monte Carlo error, effective sample size, Rhat).
-#' @rdname summary.stanidm
 #' @export
 #' @method summary stanidm
 summary.stanidm <- function(object, pars = NULL, regex_pars = NULL,
@@ -192,6 +191,8 @@ summary.stanidm <- function(object, pars = NULL, regex_pars = NULL,
   )
 }
 
+#' Print method for summary stanidm
+#'
 #' @rdname summary.stanidm
 #' @export
 #' @method print summary.idm

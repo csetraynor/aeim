@@ -2318,6 +2318,9 @@ handle_last_time <- function(object, last_time){
   if(is.null(last_time)){
     last_time <- lapply(seq_along(object$basehaz), function(b) NULL)
   } else {
+    if(length(last_time) == 1){
+      last_time <-  lapply(seq_along(object$basehaz), function(b) last_time)
+    }
     if(all(seq_along(object$basehaz) != seq_along(last_time)))
       stop2("last_time has to be provided for each transition")
   }
@@ -2329,10 +2332,27 @@ handle_times <- function(object, times){
   if(is.null(times)){
     times <- lapply(seq_along(object$basehaz), function(b) NULL)
   } else {
+    if(length(times) == 1){
+      times <-  lapply(seq_along(object$basehaz), function(b) times)
+    }
     if(all(seq_along(object$basehaz) != seq_along(times)))
       stop2("times have to be provided for each transition")
   }
   times
+}
+
+
+handle_condition <- function(object, condition){
+  if(is.null(condition)){
+    condition <- lapply(seq_along(object$basehaz), function(b) NULL)
+  } else {
+    if(length(condition) == 1){
+      condition <-  lapply(seq_along(object$basehaz), function(b) condition)
+    }
+    else if(all(seq_along(object$basehaz) != seq_along(condition)))
+      stop2("condition should be provided for all transition")
+  }
+  condition
 }
 
 

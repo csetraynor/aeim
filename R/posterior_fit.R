@@ -311,18 +311,18 @@ posterior_fit <- function(object, ...) UseMethod("posterior_fit")
 #' @export
 #'
 posterior_fit.stanidm <- function(object,
-                                       newdata     = NULL,
-                                       type        = "surv",
-                                       extrapolate = TRUE,
-                                       control     = list(),
-                                       condition   = NULL,
-                                       last_time   = NULL,
-                                       prob        = 0.95,
-                                       times       = NULL,
-                                       standardise = FALSE,
-                                       draws       = NULL,
-                                       seed        = NULL,
-                                       ...) {
+                                  newdata     = NULL,
+                                  type        = "surv",
+                                  extrapolate = TRUE,
+                                  control     = list(),
+                                  condition   = NULL,
+                                  last_time   = NULL,
+                                  prob        = 0.95,
+                                  times       = NULL,
+                                  standardise = FALSE,
+                                  draws       = NULL,
+                                  seed        = NULL,
+                                  ...) {
 
   validate_stanidm_object(object)
   if (!is.null(seed))
@@ -330,6 +330,7 @@ posterior_fit.stanidm <- function(object,
 
   last_time <- handle_last_time(object, last_time)
   times <- handle_times(object, times)
+  condition <- handle_condition(object, condition)
 
   if(!is.null(newdata))
     handle_newdata(object, newdata)
@@ -444,9 +445,9 @@ posterior_fit.stanidm <- function(object,
 
 
     # Conditional survival times
-    if (is.null(condition)) {
-      condition_h <- ifelse(type == "surv", !standardise, FALSE)
-    } else if (condition && standardise) {
+    if (is.null(condition[[h]])) {
+      condition[[h]] <- ifelse(type == "surv", !standardise, FALSE)
+    } else if (condition[[h]] && standardise) {
       stop("'condition' cannot be TRUE for standardised survival probabilities.")
     }
 
@@ -465,7 +466,7 @@ posterior_fit.stanidm <- function(object,
 
     # Calculate survival probability at last known survival time and then
     # use that to calculate conditional survival probabilities
-    if (condition_h) {
+    if (condition[[h]]) {
       if (!type == "surv")
         stop("'condition' can only be set to TRUE for survival probabilities.")
       cond_surv <- .pp_calculate_surv(last_time_h,
@@ -479,29 +480,29 @@ posterior_fit.stanidm <- function(object,
 
     # Summarise posterior draws to get median and CI
     out[[h]] <- .pp_summarise_surv(surv        = surv,
-                              prob        = prob,
-                              standardise = standardise)
+                                   prob        = prob,
+                                   standardise = standardise)
 
     # Add attributes
     out[[h]] <- structure(out[[h]],
-              id_var      = attr(out[[h]], "id_var"),
-              time_var    = attr(out[[h]], "time_var"),
-              type        = type,
-              extrapolate = extrapolate,
-              control     = control,
-              condition   = condition,
-              standardise = standardise,
-              last_time   = last_time,
-              ids         = id_list,
-              draws       = draws,
-              seed        = seed,
-              class       = c("survfit.stansurv", "data.frame"))
+                          id_var      = attr(out[[h]], "id_var"),
+                          time_var    = attr(out[[h]], "time_var"),
+                          type        = type,
+                          extrapolate = extrapolate,
+                          control     = control,
+                          condition   = condition,
+                          standardise = standardise,
+                          last_time   = last_time,
+                          ids         = id_list,
+                          draws       = draws,
+                          seed        = seed,
+                          class       = c("survfit.stansurv", "data.frame"))
 
   }
   structure(out,
             seed        = seed,
             class       = c("fit.stanidm", "list" )
-            )
+  )
 }
 
 # -----------------  internal  ------------------------------------------------
@@ -606,9 +607,9 @@ extrapolation_control <-
 
 
 .pp_predict_surv.stanidm <- function(object,
-                                      data,
-                                      pars,
-                                      type = "surv",
+                                     data,
+                                     pars,
+                                     type = "surv",
                                      h) {
 
   args <- nlist(basehaz   = get_basehaz(object)[[h]],
@@ -623,7 +624,7 @@ extrapolation_control <-
   if (type %in% c("loghaz", "haz")) {
     # evaluate hazard; quadrature not relevant
     lhaz <- do.call(evaluate_log_haz, args)
-  } else if (!data$has_quadrature){
+  } else if (!data$has_quadrature[h]){
     # evaluate survival; without quadrature
     lsurv <- do.call(evaluate_log_surv, args)
   } else {
@@ -769,6 +770,15 @@ print.fit.stanidm <- function(x, labels) {
   }
 }
 
+#' @rdname fit.stanidm
+#' @method as.data.frame summary.stanidm
+#' @export
+as.data.frame.fit.stanidm <- function(x, ...) {
+  x <-
+    mapply(`[<-`, x, 'transition', value = seq_along(x), SIMPLIFY = FALSE)
+
+  do.call(rbind.data.frame, unclass(x), ...)
+}
 
 
 # -----------------  plot methods  --------------------------------------------
@@ -857,120 +867,98 @@ print.fit.stanidm <- function(x, labels) {
 #'   plot(ps2)
 #' }
 #'
-plot.survfit.stanjm <- function(x,
-                                ids    = NULL,
-                                limits = c("ci", "none"),
-                                xlab   = NULL,
-                                ylab   = NULL,
-                                facet_scales = "free",
-                                ci_geom_args = NULL, ...) {
+plot.fit.stanidm <- function(x,
+                             ids    = NULL,
+                             limits = c("ci", "none"),
+                             xlab   = NULL,
+                             ylab   = NULL,
+                             facet_scales = "free",
+                             ci_geom_args = NULL,
+                             labels = "auto",
+                             ...) {
 
   limits <- match.arg (limits)
   ci     <- as.logical(limits == "ci")
 
-  type        <- attr(x, "type")
-  standardise <- attr(x, "standardise")
-  id_var      <- attr(x, "id_var")
-  time_var    <- attr(x, "time_var")
+  if(is.null(xlab)) xlab <- lapply(seq_along(x), function(x) NULL)
+  if(is.null(ylab)) ylab <- lapply(seq_along(x), function(x) NULL)
+  if(is.null(ids)) ids <- lapply(seq_along(x), function(x) NULL)
 
-  if (is.null(xlab)) xlab <- paste0("Time (", time_var, ")")
-  if (is.null(ylab)) ylab <- get_survpred_name(type)
 
-  if (!is.null(ids)) {
-    if (standardise)
-      stop("'ids' argument cannot be specified when plotting standardised ",
-           "survival probabilities.")
-    x <- subset_ids(x, ids, id_var)
-  } else {
-    ids <- if (!standardise) attr(x, "ids") else NULL
-  }
-  if (!standardise) x$id <- factor(x[[id_var]])
-  x$time <- x[[time_var]]
+  plotlist <- lapply(seq_along(x), function(i){
 
-  geom_defaults <- list(color = "black")
-  geom_mapp     <- list(mapping = aes_string(x = "time",
-                                             y = "median"))
-  geom_args     <- do.call("set_geom_args",
-                           c(defaults = list(geom_defaults), list(...)))
+    x_n <- x[[i]]
 
-  lim_defaults  <- list(alpha = 0.3)
-  lim_mapp      <- list(mapping = aes_string(x = "time",
-                                             ymin = "ci_lb",
-                                             ymax = "ci_ub"))
-  lim_args      <- do.call("set_geom_args",
-                           c(defaults = list(lim_defaults), ci_geom_args))
+    type        <- attr(x[[i]], "type")
+    standardise <- attr(x[[i]], "standardise")
+    id_var      <- attr(x[[i]], "id_var")
+    time_var    <- attr(x[[i]], "time_var")
 
-  if ((!standardise) && (length(ids) > 60L))
-    stop("Too many individuals to plot for. Perhaps consider limiting ",
-         "the number of individuals by specifying the 'ids' argument.")
+    if (is.null(xlab[[i]])) xlab[[i]] <- paste0("Time (", time_var, ")")
+    if (is.null(ylab[[i]])) ylab[[i]] <- get_survpred_name(type)
 
-  graph_base <-
-    ggplot(x) +
-    theme_bw() +
-    coord_cartesian(ylim = get_survpred_ylim(type)) +
-    do.call("geom_line", c(geom_mapp, geom_args))
+    if (!is.null(ids[[i]])) {
+      if (standardise)
+        stop("'ids' argument cannot be specified when plotting standardised ",
+             "survival probabilities.")
+      x_n <- subset_ids(x[[i]], ids[[i]], id_var)
+    } else {
+      ids <- if (!standardise) attr(x_n, "ids") else NULL
+    }
+    if (!standardise) x_n$id <- factor(x_n[[id_var]])
+    x_n$time <- x_n[[time_var]]
 
-  graph_facet <-
-    if ((!standardise) && (length(ids) > 1L)) {
-      facet_wrap(~ id, scales = facet_scales)
-    } else NULL
+    geom_defaults <- list(color = "black")
+    geom_mapp     <- list(mapping = aes_string(x = "time",
+                                               y = "median"))
+    geom_args     <- do.call("set_geom_args",
+                             c(defaults = list(geom_defaults), list(...)))
 
-  graph_limits <-
-    if (ci) {
-      do.call("geom_ribbon", c(lim_mapp, lim_args))
-    } else NULL
+    lim_defaults  <- list(alpha = 0.3)
+    lim_mapp      <- list(mapping = aes_string(x = "time",
+                                               ymin = "ci_lb",
+                                               ymax = "ci_ub"))
+    lim_args      <- do.call("set_geom_args",
+                             c(defaults = list(lim_defaults), ci_geom_args))
 
-  graph_labels <- labs(x = xlab, y = ylab)
+    if ((!standardise) && (length(ids) > 60L))
+      stop2("Too many individuals to plot for. Perhaps consider limiting ",
+           "the number of individuals by specifying the 'ids' argument.")
 
-  gg        <- graph_base + graph_facet + graph_limits + graph_labels
-  class_gg  <- class(gg)
-  class(gg) <- c("plot.survfit.stanjm", class_gg)
-  gg
+    graph_base <-
+      ggplot(x_n) +
+      theme_bw() +
+      coord_cartesian(ylim = get_survpred_ylim(type)) +
+      do.call("geom_line", c(geom_mapp, geom_args))
+
+    graph_facet <-
+      if ((!standardise) && (length(ids) > 1L)) {
+        facet_wrap(~ id, scales = facet_scales)
+      } else NULL
+
+    graph_limits <-
+      if (ci) {
+        do.call("geom_ribbon", c(lim_mapp, lim_args))
+      } else NULL
+
+    graph_labels <- labs(x = xlab[[i]], y = ylab[[i]])
+
+    gg        <- graph_base + graph_facet + graph_limits + graph_labels
+    class_gg  <- class(gg)
+    class(gg) <- c("plot.survfit.stanjm", class_gg)
+    gg
+  })
+  cowplot::plot_grid(
+    plotlist = plotlist,
+    axis = "rlbt",
+    labels = labels,
+    label_size = 10)
+
 }
 
-#' @rdname plot.survfit.stanjm
-#' @method plot survfit.stansurv
-#' @export
-#'
-plot.survfit.stansurv <- function(x,
-                                  ids = NULL,
-                                  limits = c("ci", "none"),
-                                  xlab = NULL,
-                                  ylab = NULL,
-                                  facet_scales = "free",
-                                  ci_geom_args = NULL, ...) {
-  mc <- match.call(expand.dots = FALSE)
-  mc[[1L]] <- quote(plot.survfit.stanjm)
-  ret <- eval(mc)
-  class(ret)[[1L]] <- "plot.survfit.stansurv"
-  ret
-}
 
-#'  Plot method for stanidm
-#'  -------------------------------------------
-#'
-#'  Plot the estimated subject-specific or marginal
-#'  survival function for each transition hazard
-#'
+
 #' @rdname plot.fit.stanidm
-#' @method plot survfit.stansurv
-#' @export
-#'
-plot.fit.stanidm <- function(object, ...) {
-
-  dots <- list(...)
-
-  plotlist <- lapply(seq_along(object), function(i)
-    plot.survfit.stansurv(x = object[[i]],
-                          ... = dots
-                     )
-    )
-  out <- cowplot::plot_grid(plotlist  = plotlist)
-  out
-}
-
-
-#' @rdname plot.survfit.stanjm
 #' @export
 #' @importFrom ggplot2 ggplot_build facet_wrap aes_string expand_limits
 #'
