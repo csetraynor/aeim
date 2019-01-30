@@ -471,9 +471,9 @@ idm_stan <- function(formula01,
     nrcens02 = nrcens[[2]],
     nrcens12 = nrcens[[3]],
 
-    t_event01 = t_event[[1]],
-    t_event02 = t_event[[2]],
-    t_event12 = t_event[[3]],
+    t_event01 = aa(t_event[[1]]),
+    t_event02 = aa(t_event[[2]]),
+    t_event12 = aa(t_event[[3]]),
 
     t_rcens01 = t_rcens[[1]],
     t_rcens02 = t_rcens[[2]],

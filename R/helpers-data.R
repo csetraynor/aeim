@@ -2287,6 +2287,7 @@ validate_surv <- function(x, ok_types = c("right", "counting",
 make_model_data <- function(formula, aux_formula, data, cens, aux_cens ) {
 
   data <- data[data[aux_formula$dvar] == aux_cens, ]
+  data <- data[data[formula$tvar_end] > 0, ] # remove 0 time
   data <- data[data[formula$dvar] == cens, ]
   mf <- model.frame(formula$tf_form, data, na.action = na.pass)
   include <- apply(mf, 1L, function(row) !any(is.na(row)))
