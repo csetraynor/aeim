@@ -36,7 +36,7 @@ static int current_statement_begin__;
 stan::io::program_reader prog_reader__() {
     stan::io::program_reader reader;
     reader.add_event(0, 0, "start", "model_MS");
-    reader.add_event(743, 741, "end", "model_MS");
+    reader.add_event(756, 754, "end", "model_MS");
     return reader;
 }
 
@@ -180,7 +180,7 @@ bspline_log_haz(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 52;
+        current_statement_begin__ = 50;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -189,9 +189,9 @@ bspline_log_haz(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 53;
+        current_statement_begin__ = 51;
         stan::math::assign(res, add(multiply(basis,coefs),eta));
-        current_statement_begin__ = 54;
+        current_statement_begin__ = 52;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -226,7 +226,7 @@ quadrature_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 68;
+        current_statement_begin__ = 66;
         local_scalar_t__ res;
         (void) res;  // dummy to suppress unused var warning
 
@@ -234,9 +234,9 @@ quadrature_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 69;
+        current_statement_begin__ = 67;
         stan::math::assign(res, -(dot_product(qwts,stan::math::exp(log_hazard))));
-        current_statement_begin__ = 70;
+        current_statement_begin__ = 68;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -272,13 +272,13 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 74;
+        current_statement_begin__ = 72;
         int M(0);
         (void) M;  // dummy to suppress unused var warning
 
         stan::math::fill(M, std::numeric_limits<int>::min());
         stan::math::assign(M,rows(log_hazard));
-        current_statement_begin__ = 75;
+        current_statement_begin__ = 73;
         validate_non_negative_index("hazard", "M", M);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  hazard(static_cast<Eigen::VectorXd::Index>(M));
         (void) hazard;  // dummy to suppress unused var warning
@@ -286,7 +286,7 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::initialize(hazard, DUMMY_VAR__);
         stan::math::fill(hazard,DUMMY_VAR__);
         stan::math::assign(hazard,stan::math::exp(log_hazard));
-        current_statement_begin__ = 76;
+        current_statement_begin__ = 74;
         validate_non_negative_index("qwts_mat", "N", N);
         validate_non_negative_index("qwts_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  qwts_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -295,7 +295,7 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::initialize(qwts_mat, DUMMY_VAR__);
         stan::math::fill(qwts_mat,DUMMY_VAR__);
         stan::math::assign(qwts_mat,to_matrix(qwts,N,qnodes));
-        current_statement_begin__ = 77;
+        current_statement_begin__ = 75;
         validate_non_negative_index("haz_mat", "N", N);
         validate_non_negative_index("haz_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  haz_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -304,7 +304,7 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::initialize(haz_mat, DUMMY_VAR__);
         stan::math::fill(haz_mat,DUMMY_VAR__);
         stan::math::assign(haz_mat,to_matrix(hazard,N,qnodes));
-        current_statement_begin__ = 78;
+        current_statement_begin__ = 76;
         validate_non_negative_index("chaz", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  chaz(static_cast<Eigen::VectorXd::Index>(N));
         (void) chaz;  // dummy to suppress unused var warning
@@ -312,7 +312,7 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::initialize(chaz, DUMMY_VAR__);
         stan::math::fill(chaz,DUMMY_VAR__);
         stan::math::assign(chaz,rows_dot_product(qwts_mat,haz_mat));
-        current_statement_begin__ = 79;
+        current_statement_begin__ = 77;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -321,9 +321,9 @@ quadrature_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 80;
+        current_statement_begin__ = 78;
         stan::math::assign(res, stan::math::log(subtract(1,stan::math::exp(minus(chaz)))));
-        current_statement_begin__ = 81;
+        current_statement_begin__ = 79;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -363,13 +363,13 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 87;
+        current_statement_begin__ = 85;
         int M(0);
         (void) M;  // dummy to suppress unused var warning
 
         stan::math::fill(M, std::numeric_limits<int>::min());
         stan::math::assign(M,rows(log_hazard_lower));
-        current_statement_begin__ = 88;
+        current_statement_begin__ = 86;
         validate_non_negative_index("hazard_lower", "M", M);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  hazard_lower(static_cast<Eigen::VectorXd::Index>(M));
         (void) hazard_lower;  // dummy to suppress unused var warning
@@ -377,7 +377,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(hazard_lower, DUMMY_VAR__);
         stan::math::fill(hazard_lower,DUMMY_VAR__);
         stan::math::assign(hazard_lower,stan::math::exp(log_hazard_lower));
-        current_statement_begin__ = 89;
+        current_statement_begin__ = 87;
         validate_non_negative_index("hazard_upper", "M", M);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  hazard_upper(static_cast<Eigen::VectorXd::Index>(M));
         (void) hazard_upper;  // dummy to suppress unused var warning
@@ -385,7 +385,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(hazard_upper, DUMMY_VAR__);
         stan::math::fill(hazard_upper,DUMMY_VAR__);
         stan::math::assign(hazard_upper,stan::math::exp(log_hazard_upper));
-        current_statement_begin__ = 90;
+        current_statement_begin__ = 88;
         validate_non_negative_index("qwts_lower_mat", "N", N);
         validate_non_negative_index("qwts_lower_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  qwts_lower_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -394,7 +394,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(qwts_lower_mat, DUMMY_VAR__);
         stan::math::fill(qwts_lower_mat,DUMMY_VAR__);
         stan::math::assign(qwts_lower_mat,to_matrix(qwts_lower,N,qnodes));
-        current_statement_begin__ = 91;
+        current_statement_begin__ = 89;
         validate_non_negative_index("qwts_upper_mat", "N", N);
         validate_non_negative_index("qwts_upper_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  qwts_upper_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -403,7 +403,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(qwts_upper_mat, DUMMY_VAR__);
         stan::math::fill(qwts_upper_mat,DUMMY_VAR__);
         stan::math::assign(qwts_upper_mat,to_matrix(qwts_upper,N,qnodes));
-        current_statement_begin__ = 92;
+        current_statement_begin__ = 90;
         validate_non_negative_index("haz_lower_mat", "N", N);
         validate_non_negative_index("haz_lower_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  haz_lower_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -412,7 +412,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(haz_lower_mat, DUMMY_VAR__);
         stan::math::fill(haz_lower_mat,DUMMY_VAR__);
         stan::math::assign(haz_lower_mat,to_matrix(hazard_lower,N,qnodes));
-        current_statement_begin__ = 93;
+        current_statement_begin__ = 91;
         validate_non_negative_index("haz_upper_mat", "N", N);
         validate_non_negative_index("haz_upper_mat", "qnodes", qnodes);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,Eigen::Dynamic>  haz_upper_mat(static_cast<Eigen::VectorXd::Index>(N),static_cast<Eigen::VectorXd::Index>(qnodes));
@@ -421,7 +421,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(haz_upper_mat, DUMMY_VAR__);
         stan::math::fill(haz_upper_mat,DUMMY_VAR__);
         stan::math::assign(haz_upper_mat,to_matrix(hazard_upper,N,qnodes));
-        current_statement_begin__ = 94;
+        current_statement_begin__ = 92;
         validate_non_negative_index("chaz_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  chaz_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) chaz_lower;  // dummy to suppress unused var warning
@@ -429,7 +429,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(chaz_lower, DUMMY_VAR__);
         stan::math::fill(chaz_lower,DUMMY_VAR__);
         stan::math::assign(chaz_lower,rows_dot_product(qwts_lower_mat,haz_lower_mat));
-        current_statement_begin__ = 95;
+        current_statement_begin__ = 93;
         validate_non_negative_index("chaz_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  chaz_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) chaz_upper;  // dummy to suppress unused var warning
@@ -437,7 +437,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(chaz_upper, DUMMY_VAR__);
         stan::math::fill(chaz_upper,DUMMY_VAR__);
         stan::math::assign(chaz_upper,rows_dot_product(qwts_upper_mat,haz_upper_mat));
-        current_statement_begin__ = 96;
+        current_statement_begin__ = 94;
         validate_non_negative_index("surv_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_lower;  // dummy to suppress unused var warning
@@ -445,7 +445,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(surv_lower, DUMMY_VAR__);
         stan::math::fill(surv_lower,DUMMY_VAR__);
         stan::math::assign(surv_lower,stan::math::exp(minus(chaz_lower)));
-        current_statement_begin__ = 97;
+        current_statement_begin__ = 95;
         validate_non_negative_index("surv_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_upper;  // dummy to suppress unused var warning
@@ -453,7 +453,7 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::initialize(surv_upper, DUMMY_VAR__);
         stan::math::fill(surv_upper,DUMMY_VAR__);
         stan::math::assign(surv_upper,stan::math::exp(minus(chaz_upper)));
-        current_statement_begin__ = 98;
+        current_statement_begin__ = 96;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -462,9 +462,9 @@ quadrature_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& qwts_lower,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 99;
+        current_statement_begin__ = 97;
         stan::math::assign(res, stan::math::log(subtract(surv_lower,surv_upper)));
-        current_statement_begin__ = 100;
+        current_statement_begin__ = 98;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -503,7 +503,7 @@ mspline_log_haz(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 113;
+        current_statement_begin__ = 111;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -512,9 +512,9 @@ mspline_log_haz(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 114;
+        current_statement_begin__ = 112;
         stan::math::assign(res, add(stan::math::log(multiply(basis,coefs)),eta));
-        current_statement_begin__ = 115;
+        current_statement_begin__ = 113;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -549,56 +549,56 @@ CFt(const T0__& z,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 129;
+        current_statement_begin__ = 127;
         local_scalar_t__ z2;
         (void) z2;  // dummy to suppress unused var warning
 
         stan::math::initialize(z2, DUMMY_VAR__);
         stan::math::fill(z2,DUMMY_VAR__);
         stan::math::assign(z2,square(z));
-        current_statement_begin__ = 130;
+        current_statement_begin__ = 128;
         local_scalar_t__ z3;
         (void) z3;  // dummy to suppress unused var warning
 
         stan::math::initialize(z3, DUMMY_VAR__);
         stan::math::fill(z3,DUMMY_VAR__);
         stan::math::assign(z3,(z2 * z));
-        current_statement_begin__ = 131;
+        current_statement_begin__ = 129;
         local_scalar_t__ z5;
         (void) z5;  // dummy to suppress unused var warning
 
         stan::math::initialize(z5, DUMMY_VAR__);
         stan::math::fill(z5,DUMMY_VAR__);
         stan::math::assign(z5,(z2 * z3));
-        current_statement_begin__ = 132;
+        current_statement_begin__ = 130;
         local_scalar_t__ z7;
         (void) z7;  // dummy to suppress unused var warning
 
         stan::math::initialize(z7, DUMMY_VAR__);
         stan::math::fill(z7,DUMMY_VAR__);
         stan::math::assign(z7,(z2 * z5));
-        current_statement_begin__ = 133;
+        current_statement_begin__ = 131;
         local_scalar_t__ z9;
         (void) z9;  // dummy to suppress unused var warning
 
         stan::math::initialize(z9, DUMMY_VAR__);
         stan::math::fill(z9,DUMMY_VAR__);
         stan::math::assign(z9,(z2 * z7));
-        current_statement_begin__ = 134;
+        current_statement_begin__ = 132;
         local_scalar_t__ df2;
         (void) df2;  // dummy to suppress unused var warning
 
         stan::math::initialize(df2, DUMMY_VAR__);
         stan::math::fill(df2,DUMMY_VAR__);
         stan::math::assign(df2,square(df));
-        current_statement_begin__ = 135;
+        current_statement_begin__ = 133;
         local_scalar_t__ df3;
         (void) df3;  // dummy to suppress unused var warning
 
         stan::math::initialize(df3, DUMMY_VAR__);
         stan::math::fill(df3,DUMMY_VAR__);
         stan::math::assign(df3,(df2 * df));
-        current_statement_begin__ = 136;
+        current_statement_begin__ = 134;
         local_scalar_t__ df4;
         (void) df4;  // dummy to suppress unused var warning
 
@@ -607,7 +607,7 @@ CFt(const T0__& z,
         stan::math::assign(df4,(df2 * df2));
 
 
-        current_statement_begin__ = 137;
+        current_statement_begin__ = 135;
         return stan::math::promote_scalar<fun_return_scalar_t__>(((((z + ((z3 + z) / (4 * df))) + ((((5 * z5) + (16 * z3)) + (3 * z)) / (96 * df2))) + (((((3 * z7) + (19 * z5)) + (17 * z3)) - (15 * z)) / (384 * df3))) + ((((((79 * z9) + (776 * z7)) + (1482 * z5)) - (1920 * z3)) - (945 * z)) / (92160 * df4))));
         }
     } catch (const std::exception& e) {
@@ -639,7 +639,7 @@ coefs_lb(const int& type, std::ostream* pstream__) {
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 149;
+        current_statement_begin__ = 147;
         local_scalar_t__ lb;
         (void) lb;  // dummy to suppress unused var warning
 
@@ -647,18 +647,18 @@ coefs_lb(const int& type, std::ostream* pstream__) {
         stan::math::fill(lb,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 150;
+        current_statement_begin__ = 148;
         if (as_bool(logical_eq(type,2))) {
-            current_statement_begin__ = 151;
+            current_statement_begin__ = 149;
             stan::math::assign(lb, stan::math::negative_infinity());
         } else if (as_bool(logical_eq(type,3))) {
-            current_statement_begin__ = 153;
+            current_statement_begin__ = 151;
             stan::math::assign(lb, stan::math::negative_infinity());
         } else {
-            current_statement_begin__ = 155;
+            current_statement_begin__ = 153;
             stan::math::assign(lb, 0);
         }
-        current_statement_begin__ = 156;
+        current_statement_begin__ = 154;
         return stan::math::promote_scalar<fun_return_scalar_t__>(lb);
         }
     } catch (const std::exception& e) {
@@ -692,7 +692,7 @@ make_beta(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& z_beta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 169;
+        current_statement_begin__ = 167;
         validate_non_negative_index("beta", "rows(z_beta)", rows(z_beta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta(static_cast<Eigen::VectorXd::Index>(rows(z_beta)));
         (void) beta;  // dummy to suppress unused var warning
@@ -701,9 +701,9 @@ make_beta(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& z_beta,
         stan::math::fill(beta,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 172;
+        current_statement_begin__ = 170;
         stan::math::assign(beta, add(elt_multiply(z_beta,prior_scale),prior_mean));
-        current_statement_begin__ = 173;
+        current_statement_begin__ = 171;
         return stan::math::promote_scalar<fun_return_scalar_t__>(beta);
         }
     } catch (const std::exception& e) {
@@ -739,9 +739,9 @@ beta_lp(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& z_beta,
     int current_statement_begin__ = -1;
     try {
 
-        current_statement_begin__ = 192;
+        current_statement_begin__ = 190;
         lp_accum__.add(normal_log(z_beta,0,1));
-        current_statement_begin__ = 194;
+        current_statement_begin__ = 192;
         return stan::math::promote_scalar<fun_return_scalar_t__>(get_lp(lp__, lp_accum__));
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -774,19 +774,19 @@ basehaz_lp(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& aux_unscaled,
     int current_statement_begin__ = -1;
     try {
 
-        current_statement_begin__ = 207;
+        current_statement_begin__ = 205;
         if (as_bool(logical_gt(dist,0))) {
 
-            current_statement_begin__ = 208;
+            current_statement_begin__ = 206;
             if (as_bool(logical_eq(dist,1))) {
-                current_statement_begin__ = 209;
+                current_statement_begin__ = 207;
                 lp_accum__.add(normal_log(aux_unscaled,0,1));
             } else {
-                current_statement_begin__ = 211;
+                current_statement_begin__ = 209;
                 lp_accum__.add(exponential_log(aux_unscaled,1));
             }
         }
-        current_statement_begin__ = 213;
+        current_statement_begin__ = 211;
         return stan::math::promote_scalar<fun_return_scalar_t__>(get_lp(lp__, lp_accum__));
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -821,12 +821,12 @@ gamma_lp(const T0__& gamma,
     int current_statement_begin__ = -1;
     try {
 
-        current_statement_begin__ = 227;
+        current_statement_begin__ = 225;
         if (as_bool(logical_eq(dist,1))) {
-            current_statement_begin__ = 228;
+            current_statement_begin__ = 226;
             lp_accum__.add(normal_log(gamma,mean,scale));
         }
-        current_statement_begin__ = 232;
+        current_statement_begin__ = 230;
         return stan::math::promote_scalar<fun_return_scalar_t__>(get_lp(lp__, lp_accum__));
     } catch (const std::exception& e) {
         stan::lang::rethrow_located(e, current_statement_begin__, prog_reader__());
@@ -861,13 +861,13 @@ pow_vec(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& x,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 243;
+        current_statement_begin__ = 241;
         int N(0);
         (void) N;  // dummy to suppress unused var warning
 
         stan::math::fill(N, std::numeric_limits<int>::min());
         stan::math::assign(N,rows(x));
-        current_statement_begin__ = 244;
+        current_statement_begin__ = 242;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -876,15 +876,15 @@ pow_vec(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& x,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 245;
+        current_statement_begin__ = 243;
         for (int n = 1; n <= N; ++n) {
-            current_statement_begin__ = 246;
+            current_statement_begin__ = 244;
             stan::model::assign(res, 
                         stan::model::cons_list(stan::model::index_uni(n), stan::model::nil_index_list()), 
                         pow(get_base1(x,n,"x",1),y), 
                         "assigning variable res");
         }
-        current_statement_begin__ = 247;
+        current_statement_begin__ = 245;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -918,7 +918,7 @@ exponential_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 258;
+        current_statement_begin__ = 256;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -927,9 +927,9 @@ exponential_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 259;
+        current_statement_begin__ = 257;
         stan::math::assign(res, elt_multiply(minus(t),stan::math::exp(eta)));
-        current_statement_begin__ = 260;
+        current_statement_begin__ = 258;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -963,7 +963,7 @@ exponential_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 264;
+        current_statement_begin__ = 262;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -972,9 +972,9 @@ exponential_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 265;
+        current_statement_begin__ = 263;
         stan::math::assign(res, stan::math::log(subtract(1,stan::math::exp(elt_multiply(minus(t),stan::math::exp(eta))))));
-        current_statement_begin__ = 266;
+        current_statement_begin__ = 264;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1009,13 +1009,13 @@ exponential_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 270;
+        current_statement_begin__ = 268;
         int N(0);
         (void) N;  // dummy to suppress unused var warning
 
         stan::math::fill(N, std::numeric_limits<int>::min());
         stan::math::assign(N,rows(eta));
-        current_statement_begin__ = 271;
+        current_statement_begin__ = 269;
         validate_non_negative_index("exp_eta", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  exp_eta(static_cast<Eigen::VectorXd::Index>(N));
         (void) exp_eta;  // dummy to suppress unused var warning
@@ -1023,7 +1023,7 @@ exponential_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(exp_eta, DUMMY_VAR__);
         stan::math::fill(exp_eta,DUMMY_VAR__);
         stan::math::assign(exp_eta,stan::math::exp(eta));
-        current_statement_begin__ = 272;
+        current_statement_begin__ = 270;
         validate_non_negative_index("surv_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_lower;  // dummy to suppress unused var warning
@@ -1031,7 +1031,7 @@ exponential_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_lower, DUMMY_VAR__);
         stan::math::fill(surv_lower,DUMMY_VAR__);
         stan::math::assign(surv_lower,stan::math::exp(elt_multiply(minus(t_lower),exp_eta)));
-        current_statement_begin__ = 273;
+        current_statement_begin__ = 271;
         validate_non_negative_index("surv_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_upper;  // dummy to suppress unused var warning
@@ -1039,7 +1039,7 @@ exponential_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_upper, DUMMY_VAR__);
         stan::math::fill(surv_upper,DUMMY_VAR__);
         stan::math::assign(surv_upper,stan::math::exp(elt_multiply(minus(t_upper),exp_eta)));
-        current_statement_begin__ = 274;
+        current_statement_begin__ = 272;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -1048,9 +1048,9 @@ exponential_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 275;
+        current_statement_begin__ = 273;
         stan::math::assign(res, stan::math::log(subtract(surv_lower,surv_upper)));
-        current_statement_begin__ = 276;
+        current_statement_begin__ = 274;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1086,7 +1086,7 @@ weibull_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 288;
+        current_statement_begin__ = 286;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1095,9 +1095,9 @@ weibull_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 289;
+        current_statement_begin__ = 287;
         stan::math::assign(res, elt_multiply(minus(pow_vec(t,shape, pstream__)),stan::math::exp(eta)));
-        current_statement_begin__ = 290;
+        current_statement_begin__ = 288;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1133,7 +1133,7 @@ weibull_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 294;
+        current_statement_begin__ = 292;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1142,9 +1142,9 @@ weibull_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 295;
+        current_statement_begin__ = 293;
         stan::math::assign(res, stan::math::log(subtract(1,stan::math::exp(elt_multiply(minus(pow_vec(t,shape, pstream__)),stan::math::exp(eta))))));
-        current_statement_begin__ = 296;
+        current_statement_begin__ = 294;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1181,13 +1181,13 @@ weibull_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 300;
+        current_statement_begin__ = 298;
         int N(0);
         (void) N;  // dummy to suppress unused var warning
 
         stan::math::fill(N, std::numeric_limits<int>::min());
         stan::math::assign(N,rows(eta));
-        current_statement_begin__ = 301;
+        current_statement_begin__ = 299;
         validate_non_negative_index("exp_eta", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  exp_eta(static_cast<Eigen::VectorXd::Index>(N));
         (void) exp_eta;  // dummy to suppress unused var warning
@@ -1195,7 +1195,7 @@ weibull_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(exp_eta, DUMMY_VAR__);
         stan::math::fill(exp_eta,DUMMY_VAR__);
         stan::math::assign(exp_eta,stan::math::exp(eta));
-        current_statement_begin__ = 302;
+        current_statement_begin__ = 300;
         validate_non_negative_index("surv_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_lower;  // dummy to suppress unused var warning
@@ -1203,7 +1203,7 @@ weibull_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_lower, DUMMY_VAR__);
         stan::math::fill(surv_lower,DUMMY_VAR__);
         stan::math::assign(surv_lower,stan::math::exp(elt_multiply(minus(pow_vec(t_lower,shape, pstream__)),exp_eta)));
-        current_statement_begin__ = 303;
+        current_statement_begin__ = 301;
         validate_non_negative_index("surv_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_upper;  // dummy to suppress unused var warning
@@ -1211,7 +1211,7 @@ weibull_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_upper, DUMMY_VAR__);
         stan::math::fill(surv_upper,DUMMY_VAR__);
         stan::math::assign(surv_upper,stan::math::exp(elt_multiply(minus(pow_vec(t_upper,shape, pstream__)),exp_eta)));
-        current_statement_begin__ = 304;
+        current_statement_begin__ = 302;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -1220,9 +1220,9 @@ weibull_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 305;
+        current_statement_begin__ = 303;
         stan::math::assign(res, stan::math::log(subtract(surv_lower,surv_upper)));
-        current_statement_begin__ = 306;
+        current_statement_begin__ = 304;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1259,7 +1259,7 @@ gompertz_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 318;
+        current_statement_begin__ = 316;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1268,9 +1268,9 @@ gompertz_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 319;
+        current_statement_begin__ = 317;
         stan::math::assign(res, elt_multiply(multiply(inv(scale),minus(subtract(stan::math::exp(multiply(scale,t)),1))),stan::math::exp(eta)));
-        current_statement_begin__ = 320;
+        current_statement_begin__ = 318;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1306,7 +1306,7 @@ gompertz_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 324;
+        current_statement_begin__ = 322;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1315,9 +1315,9 @@ gompertz_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 325;
+        current_statement_begin__ = 323;
         stan::math::assign(res, stan::math::log(subtract(1,stan::math::exp(elt_multiply(multiply(inv(scale),minus(subtract(stan::math::exp(multiply(scale,t)),1))),stan::math::exp(eta))))));
-        current_statement_begin__ = 326;
+        current_statement_begin__ = 324;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1354,20 +1354,20 @@ gompertz_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 330;
+        current_statement_begin__ = 328;
         int N(0);
         (void) N;  // dummy to suppress unused var warning
 
         stan::math::fill(N, std::numeric_limits<int>::min());
         stan::math::assign(N,rows(eta));
-        current_statement_begin__ = 331;
+        current_statement_begin__ = 329;
         local_scalar_t__ inv_scale;
         (void) inv_scale;  // dummy to suppress unused var warning
 
         stan::math::initialize(inv_scale, DUMMY_VAR__);
         stan::math::fill(inv_scale,DUMMY_VAR__);
         stan::math::assign(inv_scale,inv(scale));
-        current_statement_begin__ = 332;
+        current_statement_begin__ = 330;
         validate_non_negative_index("exp_eta", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  exp_eta(static_cast<Eigen::VectorXd::Index>(N));
         (void) exp_eta;  // dummy to suppress unused var warning
@@ -1375,7 +1375,7 @@ gompertz_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(exp_eta, DUMMY_VAR__);
         stan::math::fill(exp_eta,DUMMY_VAR__);
         stan::math::assign(exp_eta,stan::math::exp(eta));
-        current_statement_begin__ = 333;
+        current_statement_begin__ = 331;
         validate_non_negative_index("surv_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_lower;  // dummy to suppress unused var warning
@@ -1383,7 +1383,7 @@ gompertz_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_lower, DUMMY_VAR__);
         stan::math::fill(surv_lower,DUMMY_VAR__);
         stan::math::assign(surv_lower,stan::math::exp(elt_multiply(multiply(inv_scale,minus(subtract(stan::math::exp(multiply(scale,t_lower)),1))),exp_eta)));
-        current_statement_begin__ = 334;
+        current_statement_begin__ = 332;
         validate_non_negative_index("surv_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_upper;  // dummy to suppress unused var warning
@@ -1391,7 +1391,7 @@ gompertz_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_upper, DUMMY_VAR__);
         stan::math::fill(surv_upper,DUMMY_VAR__);
         stan::math::assign(surv_upper,stan::math::exp(elt_multiply(multiply(inv_scale,minus(subtract(stan::math::exp(multiply(scale,t_upper)),1))),exp_eta)));
-        current_statement_begin__ = 335;
+        current_statement_begin__ = 333;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -1400,9 +1400,9 @@ gompertz_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 336;
+        current_statement_begin__ = 334;
         stan::math::assign(res, stan::math::log(subtract(surv_lower,surv_upper)));
-        current_statement_begin__ = 337;
+        current_statement_begin__ = 335;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1439,7 +1439,7 @@ mspline_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 349;
+        current_statement_begin__ = 347;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1448,9 +1448,9 @@ mspline_log_surv(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 350;
+        current_statement_begin__ = 348;
         stan::math::assign(res, elt_multiply(minus(multiply(ibasis,coefs)),stan::math::exp(eta)));
-        current_statement_begin__ = 351;
+        current_statement_begin__ = 349;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1486,7 +1486,7 @@ mspline_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 355;
+        current_statement_begin__ = 353;
         validate_non_negative_index("res", "rows(eta)", rows(eta));
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(rows(eta)));
         (void) res;  // dummy to suppress unused var warning
@@ -1495,9 +1495,9 @@ mspline_log_cdf(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 356;
+        current_statement_begin__ = 354;
         stan::math::assign(res, stan::math::log(subtract(1,stan::math::exp(elt_multiply(minus(multiply(ibasis,coefs)),stan::math::exp(eta))))));
-        current_statement_begin__ = 357;
+        current_statement_begin__ = 355;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1534,13 +1534,13 @@ mspline_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
     int current_statement_begin__ = -1;
     try {
         {
-        current_statement_begin__ = 361;
+        current_statement_begin__ = 359;
         int N(0);
         (void) N;  // dummy to suppress unused var warning
 
         stan::math::fill(N, std::numeric_limits<int>::min());
         stan::math::assign(N,rows(eta));
-        current_statement_begin__ = 362;
+        current_statement_begin__ = 360;
         validate_non_negative_index("exp_eta", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  exp_eta(static_cast<Eigen::VectorXd::Index>(N));
         (void) exp_eta;  // dummy to suppress unused var warning
@@ -1548,7 +1548,7 @@ mspline_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(exp_eta, DUMMY_VAR__);
         stan::math::fill(exp_eta,DUMMY_VAR__);
         stan::math::assign(exp_eta,stan::math::exp(eta));
-        current_statement_begin__ = 363;
+        current_statement_begin__ = 361;
         validate_non_negative_index("surv_lower", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_lower(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_lower;  // dummy to suppress unused var warning
@@ -1556,7 +1556,7 @@ mspline_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_lower, DUMMY_VAR__);
         stan::math::fill(surv_lower,DUMMY_VAR__);
         stan::math::assign(surv_lower,stan::math::exp(elt_multiply(minus(multiply(ibasis_lower,coefs)),exp_eta)));
-        current_statement_begin__ = 364;
+        current_statement_begin__ = 362;
         validate_non_negative_index("surv_upper", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  surv_upper(static_cast<Eigen::VectorXd::Index>(N));
         (void) surv_upper;  // dummy to suppress unused var warning
@@ -1564,7 +1564,7 @@ mspline_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::initialize(surv_upper, DUMMY_VAR__);
         stan::math::fill(surv_upper,DUMMY_VAR__);
         stan::math::assign(surv_upper,stan::math::exp(elt_multiply(minus(multiply(ibasis_upper,coefs)),exp_eta)));
-        current_statement_begin__ = 365;
+        current_statement_begin__ = 363;
         validate_non_negative_index("res", "N", N);
         Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  res(static_cast<Eigen::VectorXd::Index>(N));
         (void) res;  // dummy to suppress unused var warning
@@ -1573,9 +1573,9 @@ mspline_log_cdf2(const Eigen::Matrix<T0__, Eigen::Dynamic,1>& eta,
         stan::math::fill(res,DUMMY_VAR__);
 
 
-        current_statement_begin__ = 366;
+        current_statement_begin__ = 364;
         stan::math::assign(res, stan::math::log(subtract(surv_lower,surv_upper)));
-        current_statement_begin__ = 367;
+        current_statement_begin__ = 365;
         return stan::math::promote_scalar<fun_return_scalar_t__>(res);
         }
     } catch (const std::exception& e) {
@@ -1706,79 +1706,79 @@ public:
 
         // initialize member variables
         try {
-            current_statement_begin__ = 376;
+            current_statement_begin__ = 374;
             context__.validate_dims("data initialization", "nevent01", "int", context__.to_vec());
             nevent01 = int(0);
             vals_i__ = context__.vals_i("nevent01");
             pos__ = 0;
             nevent01 = vals_i__[pos__++];
-            current_statement_begin__ = 377;
+            current_statement_begin__ = 375;
             context__.validate_dims("data initialization", "nevent02", "int", context__.to_vec());
             nevent02 = int(0);
             vals_i__ = context__.vals_i("nevent02");
             pos__ = 0;
             nevent02 = vals_i__[pos__++];
-            current_statement_begin__ = 378;
+            current_statement_begin__ = 376;
             context__.validate_dims("data initialization", "nevent12", "int", context__.to_vec());
             nevent12 = int(0);
             vals_i__ = context__.vals_i("nevent12");
             pos__ = 0;
             nevent12 = vals_i__[pos__++];
-            current_statement_begin__ = 380;
+            current_statement_begin__ = 378;
             context__.validate_dims("data initialization", "nrcens01", "int", context__.to_vec());
             nrcens01 = int(0);
             vals_i__ = context__.vals_i("nrcens01");
             pos__ = 0;
             nrcens01 = vals_i__[pos__++];
-            current_statement_begin__ = 381;
+            current_statement_begin__ = 379;
             context__.validate_dims("data initialization", "nrcens02", "int", context__.to_vec());
             nrcens02 = int(0);
             vals_i__ = context__.vals_i("nrcens02");
             pos__ = 0;
             nrcens02 = vals_i__[pos__++];
-            current_statement_begin__ = 382;
+            current_statement_begin__ = 380;
             context__.validate_dims("data initialization", "nrcens12", "int", context__.to_vec());
             nrcens12 = int(0);
             vals_i__ = context__.vals_i("nrcens12");
             pos__ = 0;
             nrcens12 = vals_i__[pos__++];
-            current_statement_begin__ = 384;
+            current_statement_begin__ = 382;
             context__.validate_dims("data initialization", "K01", "int", context__.to_vec());
             K01 = int(0);
             vals_i__ = context__.vals_i("K01");
             pos__ = 0;
             K01 = vals_i__[pos__++];
-            current_statement_begin__ = 385;
+            current_statement_begin__ = 383;
             context__.validate_dims("data initialization", "K02", "int", context__.to_vec());
             K02 = int(0);
             vals_i__ = context__.vals_i("K02");
             pos__ = 0;
             K02 = vals_i__[pos__++];
-            current_statement_begin__ = 386;
+            current_statement_begin__ = 384;
             context__.validate_dims("data initialization", "K12", "int", context__.to_vec());
             K12 = int(0);
             vals_i__ = context__.vals_i("K12");
             pos__ = 0;
             K12 = vals_i__[pos__++];
-            current_statement_begin__ = 389;
+            current_statement_begin__ = 387;
             context__.validate_dims("data initialization", "log_crude_event_rate01", "double", context__.to_vec());
             log_crude_event_rate01 = double(0);
             vals_r__ = context__.vals_r("log_crude_event_rate01");
             pos__ = 0;
             log_crude_event_rate01 = vals_r__[pos__++];
-            current_statement_begin__ = 390;
+            current_statement_begin__ = 388;
             context__.validate_dims("data initialization", "log_crude_event_rate02", "double", context__.to_vec());
             log_crude_event_rate02 = double(0);
             vals_r__ = context__.vals_r("log_crude_event_rate02");
             pos__ = 0;
             log_crude_event_rate02 = vals_r__[pos__++];
-            current_statement_begin__ = 391;
+            current_statement_begin__ = 389;
             context__.validate_dims("data initialization", "log_crude_event_rate12", "double", context__.to_vec());
             log_crude_event_rate12 = double(0);
             vals_r__ = context__.vals_r("log_crude_event_rate12");
             pos__ = 0;
             log_crude_event_rate12 = vals_r__[pos__++];
-            current_statement_begin__ = 394;
+            current_statement_begin__ = 392;
             validate_non_negative_index("t_event01", "nevent01", nevent01);
             context__.validate_dims("data initialization", "t_event01", "vector_d", context__.to_vec(nevent01));
             validate_non_negative_index("t_event01", "nevent01", nevent01);
@@ -1789,7 +1789,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_event01_i_vec_lim__; ++i_vec__) {
                 t_event01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 395;
+            current_statement_begin__ = 393;
             validate_non_negative_index("t_event02", "nevent02", nevent02);
             context__.validate_dims("data initialization", "t_event02", "vector_d", context__.to_vec(nevent02));
             validate_non_negative_index("t_event02", "nevent02", nevent02);
@@ -1800,7 +1800,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_event02_i_vec_lim__; ++i_vec__) {
                 t_event02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 396;
+            current_statement_begin__ = 394;
             validate_non_negative_index("t_event12", "nevent12", nevent12);
             context__.validate_dims("data initialization", "t_event12", "vector_d", context__.to_vec(nevent12));
             validate_non_negative_index("t_event12", "nevent12", nevent12);
@@ -1811,7 +1811,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_event12_i_vec_lim__; ++i_vec__) {
                 t_event12[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 398;
+            current_statement_begin__ = 396;
             validate_non_negative_index("t_rcens01", "nrcens01", nrcens01);
             context__.validate_dims("data initialization", "t_rcens01", "vector_d", context__.to_vec(nrcens01));
             validate_non_negative_index("t_rcens01", "nrcens01", nrcens01);
@@ -1822,7 +1822,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_rcens01_i_vec_lim__; ++i_vec__) {
                 t_rcens01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 399;
+            current_statement_begin__ = 397;
             validate_non_negative_index("t_rcens02", "nrcens02", nrcens02);
             context__.validate_dims("data initialization", "t_rcens02", "vector_d", context__.to_vec(nrcens02));
             validate_non_negative_index("t_rcens02", "nrcens02", nrcens02);
@@ -1833,7 +1833,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_rcens02_i_vec_lim__; ++i_vec__) {
                 t_rcens02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 400;
+            current_statement_begin__ = 398;
             validate_non_negative_index("t_rcens12", "nrcens12", nrcens12);
             context__.validate_dims("data initialization", "t_rcens12", "vector_d", context__.to_vec(nrcens12));
             validate_non_negative_index("t_rcens12", "nrcens12", nrcens12);
@@ -1844,7 +1844,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < t_rcens12_i_vec_lim__; ++i_vec__) {
                 t_rcens12[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 402;
+            current_statement_begin__ = 400;
             validate_non_negative_index("x_bar01", "K01", K01);
             context__.validate_dims("data initialization", "x_bar01", "vector_d", context__.to_vec(K01));
             validate_non_negative_index("x_bar01", "K01", K01);
@@ -1855,7 +1855,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < x_bar01_i_vec_lim__; ++i_vec__) {
                 x_bar01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 403;
+            current_statement_begin__ = 401;
             validate_non_negative_index("x_bar02", "K02", K02);
             context__.validate_dims("data initialization", "x_bar02", "vector_d", context__.to_vec(K02));
             validate_non_negative_index("x_bar02", "K02", K02);
@@ -1866,7 +1866,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < x_bar02_i_vec_lim__; ++i_vec__) {
                 x_bar02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 404;
+            current_statement_begin__ = 402;
             validate_non_negative_index("x_bar12", "K12", K12);
             context__.validate_dims("data initialization", "x_bar12", "vector_d", context__.to_vec(K12));
             validate_non_negative_index("x_bar12", "K12", K12);
@@ -1877,7 +1877,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < x_bar12_i_vec_lim__; ++i_vec__) {
                 x_bar12[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 406;
+            current_statement_begin__ = 404;
             validate_non_negative_index("x_event01", "nevent01", nevent01);
             validate_non_negative_index("x_event01", "K01", K01);
             context__.validate_dims("data initialization", "x_event01", "matrix_d", context__.to_vec(nevent01,K01));
@@ -1893,7 +1893,7 @@ public:
                     x_event01(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 407;
+            current_statement_begin__ = 405;
             validate_non_negative_index("x_event02", "nevent02", nevent02);
             validate_non_negative_index("x_event02", "K02", K02);
             context__.validate_dims("data initialization", "x_event02", "matrix_d", context__.to_vec(nevent02,K02));
@@ -1909,7 +1909,7 @@ public:
                     x_event02(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 408;
+            current_statement_begin__ = 406;
             validate_non_negative_index("x_event12", "nevent12", nevent12);
             validate_non_negative_index("x_event12", "K12", K12);
             context__.validate_dims("data initialization", "x_event12", "matrix_d", context__.to_vec(nevent12,K12));
@@ -1925,7 +1925,7 @@ public:
                     x_event12(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 410;
+            current_statement_begin__ = 408;
             validate_non_negative_index("x_rcens01", "nrcens01", nrcens01);
             validate_non_negative_index("x_rcens01", "K01", K01);
             context__.validate_dims("data initialization", "x_rcens01", "matrix_d", context__.to_vec(nrcens01,K01));
@@ -1941,7 +1941,7 @@ public:
                     x_rcens01(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 411;
+            current_statement_begin__ = 409;
             validate_non_negative_index("x_rcens02", "nrcens02", nrcens02);
             validate_non_negative_index("x_rcens02", "K02", K02);
             context__.validate_dims("data initialization", "x_rcens02", "matrix_d", context__.to_vec(nrcens02,K02));
@@ -1957,7 +1957,7 @@ public:
                     x_rcens02(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 412;
+            current_statement_begin__ = 410;
             validate_non_negative_index("x_rcens12", "nrcens12", nrcens12);
             validate_non_negative_index("x_rcens12", "K12", K12);
             context__.validate_dims("data initialization", "x_rcens12", "matrix_d", context__.to_vec(nrcens12,K12));
@@ -1973,25 +1973,25 @@ public:
                     x_rcens12(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 415;
+            current_statement_begin__ = 413;
             context__.validate_dims("data initialization", "nvars01", "int", context__.to_vec());
             nvars01 = int(0);
             vals_i__ = context__.vals_i("nvars01");
             pos__ = 0;
             nvars01 = vals_i__[pos__++];
-            current_statement_begin__ = 416;
+            current_statement_begin__ = 414;
             context__.validate_dims("data initialization", "nvars02", "int", context__.to_vec());
             nvars02 = int(0);
             vals_i__ = context__.vals_i("nvars02");
             pos__ = 0;
             nvars02 = vals_i__[pos__++];
-            current_statement_begin__ = 417;
+            current_statement_begin__ = 415;
             context__.validate_dims("data initialization", "nvars12", "int", context__.to_vec());
             nvars12 = int(0);
             vals_i__ = context__.vals_i("nvars12");
             pos__ = 0;
             nvars12 = vals_i__[pos__++];
-            current_statement_begin__ = 419;
+            current_statement_begin__ = 417;
             validate_non_negative_index("basis_event01", "nevent01", nevent01);
             validate_non_negative_index("basis_event01", "nvars01", nvars01);
             context__.validate_dims("data initialization", "basis_event01", "matrix_d", context__.to_vec(nevent01,nvars01));
@@ -2007,7 +2007,7 @@ public:
                     basis_event01(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 420;
+            current_statement_begin__ = 418;
             validate_non_negative_index("basis_event02", "nevent02", nevent02);
             validate_non_negative_index("basis_event02", "nvars02", nvars02);
             context__.validate_dims("data initialization", "basis_event02", "matrix_d", context__.to_vec(nevent02,nvars02));
@@ -2023,7 +2023,7 @@ public:
                     basis_event02(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 421;
+            current_statement_begin__ = 419;
             validate_non_negative_index("basis_event12", "nevent12", nevent12);
             validate_non_negative_index("basis_event12", "nvars12", nvars12);
             context__.validate_dims("data initialization", "basis_event12", "matrix_d", context__.to_vec(nevent12,nvars12));
@@ -2039,7 +2039,7 @@ public:
                     basis_event12(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 423;
+            current_statement_begin__ = 421;
             validate_non_negative_index("ibasis_event01", "nevent01", nevent01);
             validate_non_negative_index("ibasis_event01", "nvars01", nvars01);
             context__.validate_dims("data initialization", "ibasis_event01", "matrix_d", context__.to_vec(nevent01,nvars01));
@@ -2055,7 +2055,7 @@ public:
                     ibasis_event01(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 424;
+            current_statement_begin__ = 422;
             validate_non_negative_index("ibasis_event02", "nevent02", nevent02);
             validate_non_negative_index("ibasis_event02", "nvars02", nvars02);
             context__.validate_dims("data initialization", "ibasis_event02", "matrix_d", context__.to_vec(nevent02,nvars02));
@@ -2071,7 +2071,7 @@ public:
                     ibasis_event02(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 425;
+            current_statement_begin__ = 423;
             validate_non_negative_index("ibasis_event12", "nevent12", nevent12);
             validate_non_negative_index("ibasis_event12", "nvars12", nvars12);
             context__.validate_dims("data initialization", "ibasis_event12", "matrix_d", context__.to_vec(nevent12,nvars12));
@@ -2087,7 +2087,7 @@ public:
                     ibasis_event12(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 427;
+            current_statement_begin__ = 425;
             validate_non_negative_index("ibasis_rcens01", "nrcens01", nrcens01);
             validate_non_negative_index("ibasis_rcens01", "nvars01", nvars01);
             context__.validate_dims("data initialization", "ibasis_rcens01", "matrix_d", context__.to_vec(nrcens01,nvars01));
@@ -2103,7 +2103,7 @@ public:
                     ibasis_rcens01(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 428;
+            current_statement_begin__ = 426;
             validate_non_negative_index("ibasis_rcens02", "nrcens02", nrcens02);
             validate_non_negative_index("ibasis_rcens02", "nvars02", nvars02);
             context__.validate_dims("data initialization", "ibasis_rcens02", "matrix_d", context__.to_vec(nrcens02,nvars02));
@@ -2119,7 +2119,7 @@ public:
                     ibasis_rcens02(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 429;
+            current_statement_begin__ = 427;
             validate_non_negative_index("ibasis_rcens12", "nrcens12", nrcens12);
             validate_non_negative_index("ibasis_rcens12", "nvars12", nvars12);
             context__.validate_dims("data initialization", "ibasis_rcens12", "matrix_d", context__.to_vec(nrcens12,nvars12));
@@ -2135,67 +2135,67 @@ public:
                     ibasis_rcens12(m_mat__,n_mat__) = vals_r__[pos__++];
                 }
             }
-            current_statement_begin__ = 438;
+            current_statement_begin__ = 436;
             context__.validate_dims("data initialization", "type01", "int", context__.to_vec());
             type01 = int(0);
             vals_i__ = context__.vals_i("type01");
             pos__ = 0;
             type01 = vals_i__[pos__++];
-            current_statement_begin__ = 439;
+            current_statement_begin__ = 437;
             context__.validate_dims("data initialization", "type02", "int", context__.to_vec());
             type02 = int(0);
             vals_i__ = context__.vals_i("type02");
             pos__ = 0;
             type02 = vals_i__[pos__++];
-            current_statement_begin__ = 440;
+            current_statement_begin__ = 438;
             context__.validate_dims("data initialization", "type12", "int", context__.to_vec());
             type12 = int(0);
             vals_i__ = context__.vals_i("type12");
             pos__ = 0;
             type12 = vals_i__[pos__++];
-            current_statement_begin__ = 443;
+            current_statement_begin__ = 441;
             context__.validate_dims("data initialization", "has_intercept01", "int", context__.to_vec());
             has_intercept01 = int(0);
             vals_i__ = context__.vals_i("has_intercept01");
             pos__ = 0;
             has_intercept01 = vals_i__[pos__++];
-            current_statement_begin__ = 444;
+            current_statement_begin__ = 442;
             context__.validate_dims("data initialization", "has_intercept02", "int", context__.to_vec());
             has_intercept02 = int(0);
             vals_i__ = context__.vals_i("has_intercept02");
             pos__ = 0;
             has_intercept02 = vals_i__[pos__++];
-            current_statement_begin__ = 445;
+            current_statement_begin__ = 443;
             context__.validate_dims("data initialization", "has_intercept12", "int", context__.to_vec());
             has_intercept12 = int(0);
             vals_i__ = context__.vals_i("has_intercept12");
             pos__ = 0;
             has_intercept12 = vals_i__[pos__++];
-            current_statement_begin__ = 446;
+            current_statement_begin__ = 444;
             context__.validate_dims("data initialization", "prior_PD", "int", context__.to_vec());
             prior_PD = int(0);
             vals_i__ = context__.vals_i("prior_PD");
             pos__ = 0;
             prior_PD = vals_i__[pos__++];
-            current_statement_begin__ = 452;
+            current_statement_begin__ = 450;
             context__.validate_dims("data initialization", "prior_dist01", "int", context__.to_vec());
             prior_dist01 = int(0);
             vals_i__ = context__.vals_i("prior_dist01");
             pos__ = 0;
             prior_dist01 = vals_i__[pos__++];
-            current_statement_begin__ = 453;
+            current_statement_begin__ = 451;
             context__.validate_dims("data initialization", "prior_dist02", "int", context__.to_vec());
             prior_dist02 = int(0);
             vals_i__ = context__.vals_i("prior_dist02");
             pos__ = 0;
             prior_dist02 = vals_i__[pos__++];
-            current_statement_begin__ = 454;
+            current_statement_begin__ = 452;
             context__.validate_dims("data initialization", "prior_dist12", "int", context__.to_vec());
             prior_dist12 = int(0);
             vals_i__ = context__.vals_i("prior_dist12");
             pos__ = 0;
             prior_dist12 = vals_i__[pos__++];
-            current_statement_begin__ = 456;
+            current_statement_begin__ = 454;
             validate_non_negative_index("prior_mean01", "K01", K01);
             context__.validate_dims("data initialization", "prior_mean01", "vector_d", context__.to_vec(K01));
             validate_non_negative_index("prior_mean01", "K01", K01);
@@ -2206,7 +2206,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_mean01_i_vec_lim__; ++i_vec__) {
                 prior_mean01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 457;
+            current_statement_begin__ = 455;
             validate_non_negative_index("prior_mean02", "K02", K02);
             context__.validate_dims("data initialization", "prior_mean02", "vector_d", context__.to_vec(K02));
             validate_non_negative_index("prior_mean02", "K02", K02);
@@ -2217,7 +2217,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_mean02_i_vec_lim__; ++i_vec__) {
                 prior_mean02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 458;
+            current_statement_begin__ = 456;
             validate_non_negative_index("prior_mean12", "K12", K12);
             context__.validate_dims("data initialization", "prior_mean12", "vector_d", context__.to_vec(K12));
             validate_non_negative_index("prior_mean12", "K12", K12);
@@ -2228,7 +2228,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_mean12_i_vec_lim__; ++i_vec__) {
                 prior_mean12[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 459;
+            current_statement_begin__ = 457;
             validate_non_negative_index("prior_scale01", "K01", K01);
             context__.validate_dims("data initialization", "prior_scale01", "vector_d", context__.to_vec(K01));
             validate_non_negative_index("prior_scale01", "K01", K01);
@@ -2239,7 +2239,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_scale01_i_vec_lim__; ++i_vec__) {
                 prior_scale01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 460;
+            current_statement_begin__ = 458;
             validate_non_negative_index("prior_scale02", "K02", K02);
             context__.validate_dims("data initialization", "prior_scale02", "vector_d", context__.to_vec(K02));
             validate_non_negative_index("prior_scale02", "K02", K02);
@@ -2250,7 +2250,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_scale02_i_vec_lim__; ++i_vec__) {
                 prior_scale02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 461;
+            current_statement_begin__ = 459;
             validate_non_negative_index("prior_scale12", "K12", K12);
             context__.validate_dims("data initialization", "prior_scale12", "vector_d", context__.to_vec(K12));
             validate_non_negative_index("prior_scale12", "K12", K12);
@@ -2261,79 +2261,79 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_scale12_i_vec_lim__; ++i_vec__) {
                 prior_scale12[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 467;
+            current_statement_begin__ = 465;
             context__.validate_dims("data initialization", "prior_dist_for_intercept01", "int", context__.to_vec());
             prior_dist_for_intercept01 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_intercept01");
             pos__ = 0;
             prior_dist_for_intercept01 = vals_i__[pos__++];
-            current_statement_begin__ = 468;
+            current_statement_begin__ = 466;
             context__.validate_dims("data initialization", "prior_dist_for_intercept02", "int", context__.to_vec());
             prior_dist_for_intercept02 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_intercept02");
             pos__ = 0;
             prior_dist_for_intercept02 = vals_i__[pos__++];
-            current_statement_begin__ = 469;
+            current_statement_begin__ = 467;
             context__.validate_dims("data initialization", "prior_dist_for_intercept12", "int", context__.to_vec());
             prior_dist_for_intercept12 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_intercept12");
             pos__ = 0;
             prior_dist_for_intercept12 = vals_i__[pos__++];
-            current_statement_begin__ = 472;
+            current_statement_begin__ = 470;
             context__.validate_dims("data initialization", "prior_mean_for_intercept01", "double", context__.to_vec());
             prior_mean_for_intercept01 = double(0);
             vals_r__ = context__.vals_r("prior_mean_for_intercept01");
             pos__ = 0;
             prior_mean_for_intercept01 = vals_r__[pos__++];
-            current_statement_begin__ = 473;
+            current_statement_begin__ = 471;
             context__.validate_dims("data initialization", "prior_scale_for_intercept01", "double", context__.to_vec());
             prior_scale_for_intercept01 = double(0);
             vals_r__ = context__.vals_r("prior_scale_for_intercept01");
             pos__ = 0;
             prior_scale_for_intercept01 = vals_r__[pos__++];
-            current_statement_begin__ = 474;
+            current_statement_begin__ = 472;
             context__.validate_dims("data initialization", "prior_mean_for_intercept02", "double", context__.to_vec());
             prior_mean_for_intercept02 = double(0);
             vals_r__ = context__.vals_r("prior_mean_for_intercept02");
             pos__ = 0;
             prior_mean_for_intercept02 = vals_r__[pos__++];
-            current_statement_begin__ = 475;
+            current_statement_begin__ = 473;
             context__.validate_dims("data initialization", "prior_scale_for_intercept02", "double", context__.to_vec());
             prior_scale_for_intercept02 = double(0);
             vals_r__ = context__.vals_r("prior_scale_for_intercept02");
             pos__ = 0;
             prior_scale_for_intercept02 = vals_r__[pos__++];
-            current_statement_begin__ = 476;
+            current_statement_begin__ = 474;
             context__.validate_dims("data initialization", "prior_mean_for_intercept12", "double", context__.to_vec());
             prior_mean_for_intercept12 = double(0);
             vals_r__ = context__.vals_r("prior_mean_for_intercept12");
             pos__ = 0;
             prior_mean_for_intercept12 = vals_r__[pos__++];
-            current_statement_begin__ = 477;
+            current_statement_begin__ = 475;
             context__.validate_dims("data initialization", "prior_scale_for_intercept12", "double", context__.to_vec());
             prior_scale_for_intercept12 = double(0);
             vals_r__ = context__.vals_r("prior_scale_for_intercept12");
             pos__ = 0;
             prior_scale_for_intercept12 = vals_r__[pos__++];
-            current_statement_begin__ = 484;
+            current_statement_begin__ = 482;
             context__.validate_dims("data initialization", "prior_dist_for_aux01", "int", context__.to_vec());
             prior_dist_for_aux01 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_aux01");
             pos__ = 0;
             prior_dist_for_aux01 = vals_i__[pos__++];
-            current_statement_begin__ = 485;
+            current_statement_begin__ = 483;
             context__.validate_dims("data initialization", "prior_dist_for_aux02", "int", context__.to_vec());
             prior_dist_for_aux02 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_aux02");
             pos__ = 0;
             prior_dist_for_aux02 = vals_i__[pos__++];
-            current_statement_begin__ = 486;
+            current_statement_begin__ = 484;
             context__.validate_dims("data initialization", "prior_dist_for_aux12", "int", context__.to_vec());
             prior_dist_for_aux12 = int(0);
             vals_i__ = context__.vals_i("prior_dist_for_aux12");
             pos__ = 0;
             prior_dist_for_aux12 = vals_i__[pos__++];
-            current_statement_begin__ = 489;
+            current_statement_begin__ = 487;
             validate_non_negative_index("prior_scale_for_aux01", "nvars01", nvars01);
             context__.validate_dims("data initialization", "prior_scale_for_aux01", "vector_d", context__.to_vec(nvars01));
             validate_non_negative_index("prior_scale_for_aux01", "nvars01", nvars01);
@@ -2344,7 +2344,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_scale_for_aux01_i_vec_lim__; ++i_vec__) {
                 prior_scale_for_aux01[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 490;
+            current_statement_begin__ = 488;
             validate_non_negative_index("prior_scale_for_aux02", "nvars02", nvars02);
             context__.validate_dims("data initialization", "prior_scale_for_aux02", "vector_d", context__.to_vec(nvars02));
             validate_non_negative_index("prior_scale_for_aux02", "nvars02", nvars02);
@@ -2355,7 +2355,7 @@ public:
             for (size_t i_vec__ = 0; i_vec__ < prior_scale_for_aux02_i_vec_lim__; ++i_vec__) {
                 prior_scale_for_aux02[i_vec__] = vals_r__[pos__++];
             }
-            current_statement_begin__ = 491;
+            current_statement_begin__ = 489;
             validate_non_negative_index("prior_scale_for_aux12", "nvars12", nvars12);
             context__.validate_dims("data initialization", "prior_scale_for_aux12", "vector_d", context__.to_vec(nvars12));
             validate_non_negative_index("prior_scale_for_aux12", "nvars12", nvars12);
@@ -2368,128 +2368,128 @@ public:
             }
 
             // validate, data variables
-            current_statement_begin__ = 376;
+            current_statement_begin__ = 374;
             check_greater_or_equal(function__,"nevent01",nevent01,0);
-            current_statement_begin__ = 377;
+            current_statement_begin__ = 375;
             check_greater_or_equal(function__,"nevent02",nevent02,0);
-            current_statement_begin__ = 378;
+            current_statement_begin__ = 376;
             check_greater_or_equal(function__,"nevent12",nevent12,0);
-            current_statement_begin__ = 380;
+            current_statement_begin__ = 378;
             check_greater_or_equal(function__,"nrcens01",nrcens01,0);
-            current_statement_begin__ = 381;
+            current_statement_begin__ = 379;
             check_greater_or_equal(function__,"nrcens02",nrcens02,0);
-            current_statement_begin__ = 382;
+            current_statement_begin__ = 380;
             check_greater_or_equal(function__,"nrcens12",nrcens12,0);
-            current_statement_begin__ = 384;
+            current_statement_begin__ = 382;
             check_greater_or_equal(function__,"K01",K01,0);
-            current_statement_begin__ = 385;
+            current_statement_begin__ = 383;
             check_greater_or_equal(function__,"K02",K02,0);
-            current_statement_begin__ = 386;
+            current_statement_begin__ = 384;
             check_greater_or_equal(function__,"K12",K12,0);
+            current_statement_begin__ = 387;
+            current_statement_begin__ = 388;
             current_statement_begin__ = 389;
-            current_statement_begin__ = 390;
-            current_statement_begin__ = 391;
+            current_statement_begin__ = 392;
+            current_statement_begin__ = 393;
             current_statement_begin__ = 394;
-            current_statement_begin__ = 395;
             current_statement_begin__ = 396;
+            current_statement_begin__ = 397;
             current_statement_begin__ = 398;
-            current_statement_begin__ = 399;
             current_statement_begin__ = 400;
+            current_statement_begin__ = 401;
             current_statement_begin__ = 402;
-            current_statement_begin__ = 403;
             current_statement_begin__ = 404;
+            current_statement_begin__ = 405;
             current_statement_begin__ = 406;
-            current_statement_begin__ = 407;
             current_statement_begin__ = 408;
+            current_statement_begin__ = 409;
             current_statement_begin__ = 410;
-            current_statement_begin__ = 411;
-            current_statement_begin__ = 412;
-            current_statement_begin__ = 415;
+            current_statement_begin__ = 413;
             check_greater_or_equal(function__,"nvars01",nvars01,0);
-            current_statement_begin__ = 416;
+            current_statement_begin__ = 414;
             check_greater_or_equal(function__,"nvars02",nvars02,0);
-            current_statement_begin__ = 417;
+            current_statement_begin__ = 415;
             check_greater_or_equal(function__,"nvars12",nvars12,0);
+            current_statement_begin__ = 417;
+            current_statement_begin__ = 418;
             current_statement_begin__ = 419;
-            current_statement_begin__ = 420;
             current_statement_begin__ = 421;
+            current_statement_begin__ = 422;
             current_statement_begin__ = 423;
-            current_statement_begin__ = 424;
             current_statement_begin__ = 425;
+            current_statement_begin__ = 426;
             current_statement_begin__ = 427;
-            current_statement_begin__ = 428;
-            current_statement_begin__ = 429;
-            current_statement_begin__ = 438;
+            current_statement_begin__ = 436;
             check_greater_or_equal(function__,"type01",type01,1);
             check_less_or_equal(function__,"type01",type01,7);
-            current_statement_begin__ = 439;
+            current_statement_begin__ = 437;
             check_greater_or_equal(function__,"type02",type02,1);
             check_less_or_equal(function__,"type02",type02,7);
-            current_statement_begin__ = 440;
+            current_statement_begin__ = 438;
             check_greater_or_equal(function__,"type12",type12,1);
             check_less_or_equal(function__,"type12",type12,7);
-            current_statement_begin__ = 443;
+            current_statement_begin__ = 441;
             check_greater_or_equal(function__,"has_intercept01",has_intercept01,0);
             check_less_or_equal(function__,"has_intercept01",has_intercept01,1);
-            current_statement_begin__ = 444;
+            current_statement_begin__ = 442;
             check_greater_or_equal(function__,"has_intercept02",has_intercept02,0);
             check_less_or_equal(function__,"has_intercept02",has_intercept02,1);
-            current_statement_begin__ = 445;
+            current_statement_begin__ = 443;
             check_greater_or_equal(function__,"has_intercept12",has_intercept12,0);
             check_less_or_equal(function__,"has_intercept12",has_intercept12,1);
-            current_statement_begin__ = 446;
+            current_statement_begin__ = 444;
             check_greater_or_equal(function__,"prior_PD",prior_PD,0);
             check_less_or_equal(function__,"prior_PD",prior_PD,1);
-            current_statement_begin__ = 452;
+            current_statement_begin__ = 450;
             check_greater_or_equal(function__,"prior_dist01",prior_dist01,0);
             check_less_or_equal(function__,"prior_dist01",prior_dist01,2);
-            current_statement_begin__ = 453;
+            current_statement_begin__ = 451;
             check_greater_or_equal(function__,"prior_dist02",prior_dist02,0);
             check_less_or_equal(function__,"prior_dist02",prior_dist02,2);
-            current_statement_begin__ = 454;
+            current_statement_begin__ = 452;
             check_greater_or_equal(function__,"prior_dist12",prior_dist12,0);
             check_less_or_equal(function__,"prior_dist12",prior_dist12,2);
+            current_statement_begin__ = 454;
+            current_statement_begin__ = 455;
             current_statement_begin__ = 456;
             current_statement_begin__ = 457;
-            current_statement_begin__ = 458;
-            current_statement_begin__ = 459;
             check_greater_or_equal(function__,"prior_scale01",prior_scale01,0);
-            current_statement_begin__ = 460;
+            current_statement_begin__ = 458;
             check_greater_or_equal(function__,"prior_scale02",prior_scale02,0);
-            current_statement_begin__ = 461;
+            current_statement_begin__ = 459;
             check_greater_or_equal(function__,"prior_scale12",prior_scale12,0);
-            current_statement_begin__ = 467;
+            current_statement_begin__ = 465;
             check_greater_or_equal(function__,"prior_dist_for_intercept01",prior_dist_for_intercept01,0);
             check_less_or_equal(function__,"prior_dist_for_intercept01",prior_dist_for_intercept01,2);
-            current_statement_begin__ = 468;
+            current_statement_begin__ = 466;
             check_greater_or_equal(function__,"prior_dist_for_intercept02",prior_dist_for_intercept02,0);
             check_less_or_equal(function__,"prior_dist_for_intercept02",prior_dist_for_intercept02,2);
-            current_statement_begin__ = 469;
+            current_statement_begin__ = 467;
             check_greater_or_equal(function__,"prior_dist_for_intercept12",prior_dist_for_intercept12,0);
             check_less_or_equal(function__,"prior_dist_for_intercept12",prior_dist_for_intercept12,2);
+            current_statement_begin__ = 470;
+            current_statement_begin__ = 471;
+            check_greater_or_equal(function__,"prior_scale_for_intercept01",prior_scale_for_intercept01,0);
             current_statement_begin__ = 472;
             current_statement_begin__ = 473;
-            check_greater_or_equal(function__,"prior_scale_for_intercept01",prior_scale_for_intercept01,0);
+            check_greater_or_equal(function__,"prior_scale_for_intercept02",prior_scale_for_intercept02,0);
             current_statement_begin__ = 474;
             current_statement_begin__ = 475;
-            check_greater_or_equal(function__,"prior_scale_for_intercept02",prior_scale_for_intercept02,0);
-            current_statement_begin__ = 476;
-            current_statement_begin__ = 477;
             check_greater_or_equal(function__,"prior_scale_for_intercept12",prior_scale_for_intercept12,0);
-            current_statement_begin__ = 484;
+            current_statement_begin__ = 482;
             check_greater_or_equal(function__,"prior_dist_for_aux01",prior_dist_for_aux01,0);
             check_less_or_equal(function__,"prior_dist_for_aux01",prior_dist_for_aux01,3);
-            current_statement_begin__ = 485;
+            current_statement_begin__ = 483;
             check_greater_or_equal(function__,"prior_dist_for_aux02",prior_dist_for_aux02,0);
             check_less_or_equal(function__,"prior_dist_for_aux02",prior_dist_for_aux02,3);
-            current_statement_begin__ = 486;
+            current_statement_begin__ = 484;
             check_greater_or_equal(function__,"prior_dist_for_aux12",prior_dist_for_aux12,0);
             check_less_or_equal(function__,"prior_dist_for_aux12",prior_dist_for_aux12,3);
-            current_statement_begin__ = 489;
+            current_statement_begin__ = 487;
             check_greater_or_equal(function__,"prior_scale_for_aux01",prior_scale_for_aux01,0);
-            current_statement_begin__ = 490;
+            current_statement_begin__ = 488;
             check_greater_or_equal(function__,"prior_scale_for_aux02",prior_scale_for_aux02,0);
-            current_statement_begin__ = 491;
+            current_statement_begin__ = 489;
             check_greater_or_equal(function__,"prior_scale_for_aux12",prior_scale_for_aux12,0);
             // initialize data variables
 
@@ -2499,31 +2499,31 @@ public:
             // validate, set parameter ranges
             num_params_r__ = 0U;
             param_ranges_i__.clear();
-            current_statement_begin__ = 498;
+            current_statement_begin__ = 496;
             validate_non_negative_index("z_beta01", "K01", K01);
             num_params_r__ += K01;
-            current_statement_begin__ = 499;
+            current_statement_begin__ = 497;
             validate_non_negative_index("z_beta02", "K02", K02);
             num_params_r__ += K02;
-            current_statement_begin__ = 500;
+            current_statement_begin__ = 498;
             validate_non_negative_index("z_beta12", "K12", K12);
             num_params_r__ += K12;
-            current_statement_begin__ = 504;
+            current_statement_begin__ = 502;
             validate_non_negative_index("z_coefs01", "nvars01", nvars01);
             num_params_r__ += nvars01;
-            current_statement_begin__ = 505;
+            current_statement_begin__ = 503;
             validate_non_negative_index("z_coefs02", "nvars02", nvars02);
             num_params_r__ += nvars02;
-            current_statement_begin__ = 506;
+            current_statement_begin__ = 504;
             validate_non_negative_index("z_coefs12", "nvars12", nvars12);
             num_params_r__ += nvars12;
-            current_statement_begin__ = 509;
+            current_statement_begin__ = 507;
             validate_non_negative_index("gamma01", "has_intercept01", has_intercept01);
             num_params_r__ += has_intercept01;
-            current_statement_begin__ = 510;
+            current_statement_begin__ = 508;
             validate_non_negative_index("gamma02", "has_intercept02", has_intercept02);
             num_params_r__ += has_intercept02;
-            current_statement_begin__ = 511;
+            current_statement_begin__ = 509;
             validate_non_negative_index("gamma12", "has_intercept12", has_intercept12);
             num_params_r__ += has_intercept12;
         } catch (const std::exception& e) {
@@ -2791,42 +2791,42 @@ public:
 
 
             // transformed parameters
-            current_statement_begin__ = 517;
+            current_statement_begin__ = 515;
             validate_non_negative_index("beta01", "K01", K01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta01(static_cast<Eigen::VectorXd::Index>(K01));
             (void) beta01;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta01, DUMMY_VAR__);
             stan::math::fill(beta01,DUMMY_VAR__);
-            current_statement_begin__ = 518;
+            current_statement_begin__ = 516;
             validate_non_negative_index("beta02", "K02", K02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta02(static_cast<Eigen::VectorXd::Index>(K02));
             (void) beta02;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta02, DUMMY_VAR__);
             stan::math::fill(beta02,DUMMY_VAR__);
-            current_statement_begin__ = 519;
+            current_statement_begin__ = 517;
             validate_non_negative_index("beta12", "K12", K12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta12(static_cast<Eigen::VectorXd::Index>(K12));
             (void) beta12;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta12, DUMMY_VAR__);
             stan::math::fill(beta12,DUMMY_VAR__);
-            current_statement_begin__ = 522;
+            current_statement_begin__ = 520;
             validate_non_negative_index("coefs01", "nvars01", nvars01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs01(static_cast<Eigen::VectorXd::Index>(nvars01));
             (void) coefs01;  // dummy to suppress unused var warning
 
             stan::math::initialize(coefs01, DUMMY_VAR__);
             stan::math::fill(coefs01,DUMMY_VAR__);
-            current_statement_begin__ = 523;
+            current_statement_begin__ = 521;
             validate_non_negative_index("coefs02", "nvars02", nvars02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs02(static_cast<Eigen::VectorXd::Index>(nvars02));
             (void) coefs02;  // dummy to suppress unused var warning
 
             stan::math::initialize(coefs02, DUMMY_VAR__);
             stan::math::fill(coefs02,DUMMY_VAR__);
-            current_statement_begin__ = 524;
+            current_statement_begin__ = 522;
             validate_non_negative_index("coefs12", "nvars12", nvars12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs12(static_cast<Eigen::VectorXd::Index>(nvars12));
             (void) coefs12;  // dummy to suppress unused var warning
@@ -2835,40 +2835,40 @@ public:
             stan::math::fill(coefs12,DUMMY_VAR__);
 
 
-            current_statement_begin__ = 527;
+            current_statement_begin__ = 525;
             if (as_bool(logical_gt(K01,0))) {
 
-                current_statement_begin__ = 528;
+                current_statement_begin__ = 526;
                 stan::math::assign(beta01, make_beta(z_beta01,prior_dist01,prior_mean01,prior_scale01, pstream__));
             }
-            current_statement_begin__ = 531;
+            current_statement_begin__ = 529;
             if (as_bool(logical_gt(K02,0))) {
 
-                current_statement_begin__ = 532;
+                current_statement_begin__ = 530;
                 stan::math::assign(beta02, make_beta(z_beta02,prior_dist02,prior_mean02,prior_scale02, pstream__));
             }
-            current_statement_begin__ = 535;
+            current_statement_begin__ = 533;
             if (as_bool(logical_gt(K12,0))) {
 
-                current_statement_begin__ = 536;
+                current_statement_begin__ = 534;
                 stan::math::assign(beta12, make_beta(z_beta12,prior_dist12,prior_mean12,prior_scale12, pstream__));
             }
-            current_statement_begin__ = 541;
+            current_statement_begin__ = 539;
             if (as_bool(logical_gt(nvars01,0))) {
 
-                current_statement_begin__ = 542;
+                current_statement_begin__ = 540;
                 stan::math::assign(coefs01, elt_multiply(z_coefs01,prior_scale_for_aux01));
             }
-            current_statement_begin__ = 544;
+            current_statement_begin__ = 542;
             if (as_bool(logical_gt(nvars02,0))) {
 
-                current_statement_begin__ = 545;
+                current_statement_begin__ = 543;
                 stan::math::assign(coefs02, elt_multiply(z_coefs02,prior_scale_for_aux02));
             }
-            current_statement_begin__ = 547;
+            current_statement_begin__ = 545;
             if (as_bool(logical_gt(nvars12,0))) {
 
-                current_statement_begin__ = 548;
+                current_statement_begin__ = 546;
                 stan::math::assign(coefs12, elt_multiply(z_coefs12,prior_scale_for_aux12));
             }
 
@@ -2918,51 +2918,51 @@ public:
 
             const char* function__ = "validate transformed params";
             (void) function__;  // dummy to suppress unused var warning
+            current_statement_begin__ = 515;
+            current_statement_begin__ = 516;
             current_statement_begin__ = 517;
-            current_statement_begin__ = 518;
-            current_statement_begin__ = 519;
+            current_statement_begin__ = 520;
+            current_statement_begin__ = 521;
             current_statement_begin__ = 522;
-            current_statement_begin__ = 523;
-            current_statement_begin__ = 524;
 
             // model body
             {
-            current_statement_begin__ = 554;
+            current_statement_begin__ = 552;
             validate_non_negative_index("eta_rcens01", "nrcens01", nrcens01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_rcens01(static_cast<Eigen::VectorXd::Index>(nrcens01));
             (void) eta_rcens01;  // dummy to suppress unused var warning
 
             stan::math::initialize(eta_rcens01, DUMMY_VAR__);
             stan::math::fill(eta_rcens01,DUMMY_VAR__);
-            current_statement_begin__ = 555;
+            current_statement_begin__ = 553;
             validate_non_negative_index("eta_event01", "nevent01", nevent01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_event01(static_cast<Eigen::VectorXd::Index>(nevent01));
             (void) eta_event01;  // dummy to suppress unused var warning
 
             stan::math::initialize(eta_event01, DUMMY_VAR__);
             stan::math::fill(eta_event01,DUMMY_VAR__);
-            current_statement_begin__ = 557;
+            current_statement_begin__ = 555;
             validate_non_negative_index("eta_event02", "nevent02", nevent02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_event02(static_cast<Eigen::VectorXd::Index>(nevent02));
             (void) eta_event02;  // dummy to suppress unused var warning
 
             stan::math::initialize(eta_event02, DUMMY_VAR__);
             stan::math::fill(eta_event02,DUMMY_VAR__);
-            current_statement_begin__ = 558;
+            current_statement_begin__ = 556;
             validate_non_negative_index("eta_rcens02", "nrcens02", nrcens02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_rcens02(static_cast<Eigen::VectorXd::Index>(nrcens02));
             (void) eta_rcens02;  // dummy to suppress unused var warning
 
             stan::math::initialize(eta_rcens02, DUMMY_VAR__);
             stan::math::fill(eta_rcens02,DUMMY_VAR__);
-            current_statement_begin__ = 560;
+            current_statement_begin__ = 558;
             validate_non_negative_index("eta_rcens12", "nrcens12", nrcens12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_rcens12(static_cast<Eigen::VectorXd::Index>(nrcens12));
             (void) eta_rcens12;  // dummy to suppress unused var warning
 
             stan::math::initialize(eta_rcens12, DUMMY_VAR__);
             stan::math::fill(eta_rcens12,DUMMY_VAR__);
-            current_statement_begin__ = 561;
+            current_statement_begin__ = 559;
             validate_non_negative_index("eta_event12", "nevent12", nevent12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  eta_event12(static_cast<Eigen::VectorXd::Index>(nevent12));
             (void) eta_event12;  // dummy to suppress unused var warning
@@ -2971,160 +2971,160 @@ public:
             stan::math::fill(eta_event12,DUMMY_VAR__);
 
 
-            current_statement_begin__ = 564;
+            current_statement_begin__ = 562;
             if (as_bool(logical_gt(K01,0))) {
 
-                current_statement_begin__ = 565;
+                current_statement_begin__ = 563;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 565;
+                    current_statement_begin__ = 563;
                     stan::math::assign(eta_event01, multiply(x_event01,beta01));
                 }
-                current_statement_begin__ = 566;
+                current_statement_begin__ = 564;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 566;
+                    current_statement_begin__ = 564;
                     stan::math::assign(eta_rcens01, multiply(x_rcens01,beta01));
                 }
             } else {
 
-                current_statement_begin__ = 568;
+                current_statement_begin__ = 566;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 568;
+                    current_statement_begin__ = 566;
                     stan::math::assign(eta_event01, rep_vector(0.0,nevent01));
                 }
-                current_statement_begin__ = 569;
+                current_statement_begin__ = 567;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 569;
+                    current_statement_begin__ = 567;
                     stan::math::assign(eta_rcens01, rep_vector(0.0,nrcens01));
                 }
             }
-            current_statement_begin__ = 572;
+            current_statement_begin__ = 570;
             if (as_bool(logical_gt(K02,0))) {
 
-                current_statement_begin__ = 573;
+                current_statement_begin__ = 571;
                 if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 573;
+                    current_statement_begin__ = 571;
                     stan::math::assign(eta_event02, multiply(x_event02,beta02));
                 }
-                current_statement_begin__ = 574;
+                current_statement_begin__ = 572;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 574;
+                    current_statement_begin__ = 572;
                     stan::math::assign(eta_rcens02, multiply(x_rcens02,beta02));
                 }
             } else {
 
-                current_statement_begin__ = 576;
+                current_statement_begin__ = 574;
                 if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 576;
+                    current_statement_begin__ = 574;
                     stan::math::assign(eta_event02, rep_vector(0.0,nevent02));
                 }
-                current_statement_begin__ = 577;
+                current_statement_begin__ = 575;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 577;
+                    current_statement_begin__ = 575;
                     stan::math::assign(eta_rcens02, rep_vector(0.0,nrcens02));
                 }
             }
-            current_statement_begin__ = 580;
+            current_statement_begin__ = 578;
             if (as_bool(logical_gt(K12,0))) {
 
-                current_statement_begin__ = 581;
+                current_statement_begin__ = 579;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 581;
+                    current_statement_begin__ = 579;
                     stan::math::assign(eta_event12, multiply(x_event12,beta12));
                 }
-                current_statement_begin__ = 582;
+                current_statement_begin__ = 580;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 582;
+                    current_statement_begin__ = 580;
                     stan::math::assign(eta_rcens12, multiply(x_rcens12,beta12));
                 }
             } else {
 
-                current_statement_begin__ = 584;
+                current_statement_begin__ = 582;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 584;
+                    current_statement_begin__ = 582;
                     stan::math::assign(eta_event12, rep_vector(0.0,nevent12));
                 }
-                current_statement_begin__ = 585;
+                current_statement_begin__ = 583;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 585;
+                    current_statement_begin__ = 583;
                     stan::math::assign(eta_rcens12, rep_vector(0.0,nrcens12));
                 }
             }
-            current_statement_begin__ = 589;
+            current_statement_begin__ = 587;
             if (as_bool(logical_eq(has_intercept01,1))) {
 
-                current_statement_begin__ = 590;
+                current_statement_begin__ = 588;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 590;
+                    current_statement_begin__ = 588;
                     stan::math::assign(eta_event01, add(eta_event01, get_base1(gamma01,1,"gamma01",1)));
                 }
-                current_statement_begin__ = 591;
+                current_statement_begin__ = 589;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 591;
+                    current_statement_begin__ = 589;
                     stan::math::assign(eta_rcens01, add(eta_rcens01, get_base1(gamma01,1,"gamma01",1)));
                 }
             }
-            current_statement_begin__ = 593;
+            current_statement_begin__ = 591;
             if (as_bool(logical_eq(has_intercept02,1))) {
 
-                current_statement_begin__ = 594;
+                current_statement_begin__ = 592;
                 if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 594;
+                    current_statement_begin__ = 592;
                     stan::math::assign(eta_event02, add(eta_event02, get_base1(gamma02,1,"gamma02",1)));
                 }
-                current_statement_begin__ = 595;
+                current_statement_begin__ = 593;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 595;
+                    current_statement_begin__ = 593;
                     stan::math::assign(eta_rcens02, add(eta_rcens02, get_base1(gamma02,1,"gamma02",1)));
                 }
             }
-            current_statement_begin__ = 597;
+            current_statement_begin__ = 595;
             if (as_bool(logical_eq(has_intercept12,1))) {
 
-                current_statement_begin__ = 598;
+                current_statement_begin__ = 596;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 598;
+                    current_statement_begin__ = 596;
                     stan::math::assign(eta_event12, add(eta_event12, get_base1(gamma12,1,"gamma12",1)));
                 }
-                current_statement_begin__ = 599;
+                current_statement_begin__ = 597;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 599;
+                    current_statement_begin__ = 597;
                     stan::math::assign(eta_rcens12, add(eta_rcens12, get_base1(gamma12,1,"gamma12",1)));
                 }
             }
-            current_statement_begin__ = 603;
+            current_statement_begin__ = 601;
             if (as_bool(logical_gt(nevent01,0))) {
-                current_statement_begin__ = 603;
+                current_statement_begin__ = 601;
                 stan::math::assign(eta_event01, add(eta_event01, log_crude_event_rate01));
             }
-            current_statement_begin__ = 604;
+            current_statement_begin__ = 602;
             if (as_bool(logical_gt(nrcens01,0))) {
-                current_statement_begin__ = 604;
+                current_statement_begin__ = 602;
                 stan::math::assign(eta_rcens01, add(eta_rcens01, log_crude_event_rate01));
             }
-            current_statement_begin__ = 606;
+            current_statement_begin__ = 604;
             if (as_bool(logical_gt(nevent02,0))) {
-                current_statement_begin__ = 606;
+                current_statement_begin__ = 604;
                 stan::math::assign(eta_event02, add(eta_event02, log_crude_event_rate02));
             }
-            current_statement_begin__ = 607;
+            current_statement_begin__ = 605;
             if (as_bool(logical_gt(nrcens02,0))) {
-                current_statement_begin__ = 607;
+                current_statement_begin__ = 605;
                 stan::math::assign(eta_rcens02, add(eta_rcens02, log_crude_event_rate02));
             }
-            current_statement_begin__ = 609;
+            current_statement_begin__ = 607;
             if (as_bool(logical_gt(nevent12,0))) {
-                current_statement_begin__ = 609;
+                current_statement_begin__ = 607;
                 stan::math::assign(eta_event12, add(eta_event12, log_crude_event_rate12));
             }
-            current_statement_begin__ = 610;
+            current_statement_begin__ = 608;
             if (as_bool(logical_gt(nrcens12,0))) {
-                current_statement_begin__ = 610;
+                current_statement_begin__ = 608;
                 stan::math::assign(eta_rcens12, add(eta_rcens12, log_crude_event_rate12));
             }
-            current_statement_begin__ = 612;
+            current_statement_begin__ = 610;
             if (as_bool(logical_eq(type01,1))) {
                 {
-                current_statement_begin__ = 613;
+                current_statement_begin__ = 611;
                 local_scalar_t__ shape01;
                 (void) shape01;  // dummy to suppress unused var warning
 
@@ -3133,67 +3133,94 @@ public:
                 stan::math::assign(shape01,get_base1(coefs01,1,"coefs01",1));
 
 
-                current_statement_begin__ = 614;
+                current_statement_begin__ = 612;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 614;
+                    current_statement_begin__ = 612;
                     lp_accum__.add(weibull_log_haz(eta_event01,t_event01,shape01, pstream__));
                 }
-                current_statement_begin__ = 615;
+                current_statement_begin__ = 613;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 615;
+                    current_statement_begin__ = 613;
                     lp_accum__.add(weibull_log_surv(eta_event01,t_event01,shape01, pstream__));
                 }
-                current_statement_begin__ = 616;
+                current_statement_begin__ = 614;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 616;
+                    current_statement_begin__ = 614;
                     lp_accum__.add(weibull_log_surv(eta_rcens01,t_rcens01,shape01, pstream__));
                 }
                 }
             } else if (as_bool(logical_eq(type01,4))) {
 
-                current_statement_begin__ = 618;
+                current_statement_begin__ = 616;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 618;
+                    current_statement_begin__ = 616;
                     lp_accum__.add(mspline_log_surv(eta_rcens01,ibasis_rcens01,coefs01, pstream__));
                 }
-                current_statement_begin__ = 619;
+                current_statement_begin__ = 617;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 619;
+                    current_statement_begin__ = 617;
                     lp_accum__.add(mspline_log_haz(eta_event01,basis_event01,coefs01, pstream__));
                 }
+                current_statement_begin__ = 618;
+                if (as_bool(logical_gt(nevent01,0))) {
+                    current_statement_begin__ = 618;
+                    lp_accum__.add(mspline_log_surv(eta_event01,ibasis_event01,coefs01, pstream__));
+                }
+            } else if (as_bool(logical_eq(type01,5))) {
+
                 current_statement_begin__ = 620;
                 if (as_bool(logical_gt(nevent01,0))) {
                     current_statement_begin__ = 620;
-                    lp_accum__.add(mspline_log_surv(eta_event01,ibasis_event01,coefs01, pstream__));
-                }
-            } else if (as_bool(logical_eq(type02,5))) {
-
-                current_statement_begin__ = 622;
-                if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 622;
                     lp_accum__.add(exponential_log_haz(eta_event01, pstream__));
                 }
-                current_statement_begin__ = 623;
+                current_statement_begin__ = 621;
                 if (as_bool(logical_gt(nevent01,0))) {
-                    current_statement_begin__ = 623;
+                    current_statement_begin__ = 621;
                     lp_accum__.add(exponential_log_surv(eta_event01,t_event01, pstream__));
                 }
-                current_statement_begin__ = 624;
+                current_statement_begin__ = 622;
                 if (as_bool(logical_gt(nrcens01,0))) {
-                    current_statement_begin__ = 624;
+                    current_statement_begin__ = 622;
                     lp_accum__.add(exponential_log_surv(eta_rcens01,t_rcens01, pstream__));
+                }
+            } else if (as_bool(logical_eq(type01,6))) {
+                {
+                current_statement_begin__ = 624;
+                local_scalar_t__ scale01;
+                (void) scale01;  // dummy to suppress unused var warning
+
+                stan::math::initialize(scale01, DUMMY_VAR__);
+                stan::math::fill(scale01,DUMMY_VAR__);
+                stan::math::assign(scale01,get_base1(coefs01,1,"coefs01",1));
+
+
+                current_statement_begin__ = 625;
+                if (as_bool(logical_gt(nevent01,0))) {
+                    current_statement_begin__ = 625;
+                    lp_accum__.add(gompertz_log_haz(eta_event01,t_event01,scale01, pstream__));
+                }
+                current_statement_begin__ = 626;
+                if (as_bool(logical_gt(nevent01,0))) {
+                    current_statement_begin__ = 626;
+                    lp_accum__.add(gompertz_log_surv(eta_event01,t_event01,scale01, pstream__));
+                }
+                current_statement_begin__ = 627;
+                if (as_bool(logical_gt(nrcens01,0))) {
+                    current_statement_begin__ = 627;
+                    lp_accum__.add(gompertz_log_surv(eta_rcens01,t_rcens01,scale01, pstream__));
+                }
                 }
             } else {
 
-                current_statement_begin__ = 626;
+                current_statement_begin__ = 629;
                 std::stringstream errmsg_stream__;
                 errmsg_stream__ << "Bug found: invalid baseline hazard 01 (without quadrature).";
                 throw std::domain_error(errmsg_stream__.str());
             }
-            current_statement_begin__ = 629;
+            current_statement_begin__ = 632;
             if (as_bool(logical_eq(type02,1))) {
                 {
-                current_statement_begin__ = 630;
+                current_statement_begin__ = 633;
                 local_scalar_t__ shape02;
                 (void) shape02;  // dummy to suppress unused var warning
 
@@ -3202,67 +3229,94 @@ public:
                 stan::math::assign(shape02,get_base1(coefs02,1,"coefs02",1));
 
 
-                current_statement_begin__ = 631;
+                current_statement_begin__ = 634;
                 if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 631;
+                    current_statement_begin__ = 634;
                     lp_accum__.add(weibull_log_haz(eta_event02,t_event02,shape02, pstream__));
                 }
-                current_statement_begin__ = 632;
+                current_statement_begin__ = 635;
                 if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 632;
+                    current_statement_begin__ = 635;
                     lp_accum__.add(weibull_log_surv(eta_event02,t_event02,shape02, pstream__));
                 }
-                current_statement_begin__ = 633;
+                current_statement_begin__ = 636;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 633;
+                    current_statement_begin__ = 636;
                     lp_accum__.add(weibull_log_surv(eta_rcens02,t_rcens02,shape02, pstream__));
                 }
                 }
             } else if (as_bool(logical_eq(type02,4))) {
 
-                current_statement_begin__ = 635;
+                current_statement_begin__ = 638;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 635;
+                    current_statement_begin__ = 638;
                     lp_accum__.add(mspline_log_surv(eta_rcens02,ibasis_rcens02,coefs02, pstream__));
                 }
-                current_statement_begin__ = 636;
-                if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 636;
-                    lp_accum__.add(mspline_log_haz(eta_event02,basis_event02,coefs02, pstream__));
-                }
-                current_statement_begin__ = 637;
-                if (as_bool(logical_gt(nevent02,0))) {
-                    current_statement_begin__ = 637;
-                    lp_accum__.add(mspline_log_surv(eta_event02,ibasis_event02,coefs02, pstream__));
-                }
-            } else if (as_bool(logical_eq(type02,5))) {
-
                 current_statement_begin__ = 639;
                 if (as_bool(logical_gt(nevent02,0))) {
                     current_statement_begin__ = 639;
-                    lp_accum__.add(exponential_log_haz(eta_event02, pstream__));
+                    lp_accum__.add(mspline_log_haz(eta_event02,basis_event02,coefs02, pstream__));
                 }
                 current_statement_begin__ = 640;
                 if (as_bool(logical_gt(nevent02,0))) {
                     current_statement_begin__ = 640;
+                    lp_accum__.add(mspline_log_surv(eta_event02,ibasis_event02,coefs02, pstream__));
+                }
+            } else if (as_bool(logical_eq(type02,5))) {
+
+                current_statement_begin__ = 642;
+                if (as_bool(logical_gt(nevent02,0))) {
+                    current_statement_begin__ = 642;
+                    lp_accum__.add(exponential_log_haz(eta_event02, pstream__));
+                }
+                current_statement_begin__ = 643;
+                if (as_bool(logical_gt(nevent02,0))) {
+                    current_statement_begin__ = 643;
                     lp_accum__.add(exponential_log_surv(eta_event02,t_event02, pstream__));
                 }
-                current_statement_begin__ = 641;
+                current_statement_begin__ = 644;
                 if (as_bool(logical_gt(nrcens02,0))) {
-                    current_statement_begin__ = 641;
+                    current_statement_begin__ = 644;
                     lp_accum__.add(exponential_log_surv(eta_rcens02,t_rcens02, pstream__));
+                }
+            } else if (as_bool(logical_eq(type02,6))) {
+                {
+                current_statement_begin__ = 646;
+                local_scalar_t__ scale02;
+                (void) scale02;  // dummy to suppress unused var warning
+
+                stan::math::initialize(scale02, DUMMY_VAR__);
+                stan::math::fill(scale02,DUMMY_VAR__);
+                stan::math::assign(scale02,get_base1(coefs02,1,"coefs02",1));
+
+
+                current_statement_begin__ = 647;
+                if (as_bool(logical_gt(nevent02,0))) {
+                    current_statement_begin__ = 647;
+                    lp_accum__.add(gompertz_log_haz(eta_event02,t_event02,scale02, pstream__));
+                }
+                current_statement_begin__ = 648;
+                if (as_bool(logical_gt(nevent02,0))) {
+                    current_statement_begin__ = 648;
+                    lp_accum__.add(gompertz_log_surv(eta_event02,t_event02,scale02, pstream__));
+                }
+                current_statement_begin__ = 649;
+                if (as_bool(logical_gt(nrcens02,0))) {
+                    current_statement_begin__ = 649;
+                    lp_accum__.add(gompertz_log_surv(eta_rcens02,t_rcens02,scale02, pstream__));
+                }
                 }
             } else {
 
-                current_statement_begin__ = 643;
+                current_statement_begin__ = 651;
                 std::stringstream errmsg_stream__;
                 errmsg_stream__ << "Bug found: invalid baseline hazard 02 (without quadrature).";
                 throw std::domain_error(errmsg_stream__.str());
             }
-            current_statement_begin__ = 646;
+            current_statement_begin__ = 654;
             if (as_bool(logical_eq(type12,1))) {
                 {
-                current_statement_begin__ = 647;
+                current_statement_begin__ = 655;
                 local_scalar_t__ shape12;
                 (void) shape12;  // dummy to suppress unused var warning
 
@@ -3271,67 +3325,94 @@ public:
                 stan::math::assign(shape12,get_base1(coefs12,1,"coefs12",1));
 
 
-                current_statement_begin__ = 648;
+                current_statement_begin__ = 656;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 648;
+                    current_statement_begin__ = 656;
                     lp_accum__.add(weibull_log_surv(eta_rcens12,t_rcens12,shape12, pstream__));
                 }
-                current_statement_begin__ = 649;
+                current_statement_begin__ = 657;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 649;
+                    current_statement_begin__ = 657;
                     lp_accum__.add(weibull_log_haz(eta_event12,t_event12,shape12, pstream__));
                 }
-                current_statement_begin__ = 650;
+                current_statement_begin__ = 658;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 650;
+                    current_statement_begin__ = 658;
                     lp_accum__.add(weibull_log_surv(eta_event12,t_event12,shape12, pstream__));
                 }
                 }
             } else if (as_bool(logical_eq(type12,4))) {
 
-                current_statement_begin__ = 652;
+                current_statement_begin__ = 660;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 652;
+                    current_statement_begin__ = 660;
                     lp_accum__.add(mspline_log_surv(eta_rcens12,ibasis_rcens12,coefs12, pstream__));
                 }
-                current_statement_begin__ = 653;
+                current_statement_begin__ = 661;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 653;
+                    current_statement_begin__ = 661;
                     lp_accum__.add(mspline_log_haz(eta_event12,basis_event12,coefs12, pstream__));
                 }
-                current_statement_begin__ = 654;
+                current_statement_begin__ = 662;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 654;
+                    current_statement_begin__ = 662;
                     lp_accum__.add(mspline_log_surv(eta_event12,ibasis_event12,coefs12, pstream__));
                 }
             } else if (as_bool(logical_eq(type12,5))) {
 
-                current_statement_begin__ = 656;
+                current_statement_begin__ = 664;
                 if (as_bool(logical_gt(nrcens12,0))) {
-                    current_statement_begin__ = 656;
+                    current_statement_begin__ = 664;
                     lp_accum__.add(exponential_log_surv(eta_rcens12,t_rcens12, pstream__));
                 }
-                current_statement_begin__ = 657;
+                current_statement_begin__ = 665;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 657;
+                    current_statement_begin__ = 665;
                     lp_accum__.add(exponential_log_haz(eta_event12, pstream__));
                 }
-                current_statement_begin__ = 658;
+                current_statement_begin__ = 666;
                 if (as_bool(logical_gt(nevent12,0))) {
-                    current_statement_begin__ = 658;
+                    current_statement_begin__ = 666;
                     lp_accum__.add(exponential_log_surv(eta_event12,t_event12, pstream__));
+                }
+            } else if (as_bool(logical_eq(type12,6))) {
+                {
+                current_statement_begin__ = 668;
+                local_scalar_t__ scale12;
+                (void) scale12;  // dummy to suppress unused var warning
+
+                stan::math::initialize(scale12, DUMMY_VAR__);
+                stan::math::fill(scale12,DUMMY_VAR__);
+                stan::math::assign(scale12,get_base1(coefs12,1,"coefs12",1));
+
+
+                current_statement_begin__ = 669;
+                if (as_bool(logical_gt(nrcens12,0))) {
+                    current_statement_begin__ = 669;
+                    lp_accum__.add(gompertz_log_surv(eta_rcens12,t_rcens12,scale12, pstream__));
+                }
+                current_statement_begin__ = 670;
+                if (as_bool(logical_gt(nevent12,0))) {
+                    current_statement_begin__ = 670;
+                    lp_accum__.add(gompertz_log_haz(eta_event12,t_event12,scale12, pstream__));
+                }
+                current_statement_begin__ = 671;
+                if (as_bool(logical_gt(nevent12,0))) {
+                    current_statement_begin__ = 671;
+                    lp_accum__.add(gompertz_log_surv(eta_event12,t_event12,scale12, pstream__));
+                }
                 }
             } else {
 
-                current_statement_begin__ = 660;
+                current_statement_begin__ = 673;
                 std::stringstream errmsg_stream__;
                 errmsg_stream__ << "Bug found: invalid baseline hazard 12 (without quadrature).";
                 throw std::domain_error(errmsg_stream__.str());
             }
-            current_statement_begin__ = 667;
+            current_statement_begin__ = 680;
             if (as_bool(logical_gt(K01,0))) {
                 {
-                current_statement_begin__ = 668;
+                current_statement_begin__ = 681;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3342,10 +3423,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 671;
+            current_statement_begin__ = 684;
             if (as_bool(logical_gt(K02,0))) {
                 {
-                current_statement_begin__ = 672;
+                current_statement_begin__ = 685;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3356,10 +3437,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 675;
+            current_statement_begin__ = 688;
             if (as_bool(logical_gt(K12,0))) {
                 {
-                current_statement_begin__ = 676;
+                current_statement_begin__ = 689;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3370,10 +3451,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 680;
+            current_statement_begin__ = 693;
             if (as_bool(logical_eq(has_intercept01,1))) {
                 {
-                current_statement_begin__ = 681;
+                current_statement_begin__ = 694;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3384,10 +3465,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 685;
+            current_statement_begin__ = 698;
             if (as_bool(logical_eq(has_intercept02,1))) {
                 {
-                current_statement_begin__ = 686;
+                current_statement_begin__ = 699;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3398,10 +3479,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 690;
+            current_statement_begin__ = 703;
             if (as_bool(logical_eq(has_intercept12,1))) {
                 {
-                current_statement_begin__ = 691;
+                current_statement_begin__ = 704;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3412,10 +3493,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 695;
+            current_statement_begin__ = 708;
             if (as_bool(logical_gt(nvars01,0))) {
                 {
-                current_statement_begin__ = 696;
+                current_statement_begin__ = 709;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3426,10 +3507,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 699;
+            current_statement_begin__ = 712;
             if (as_bool(logical_gt(nvars02,0))) {
                 {
-                current_statement_begin__ = 700;
+                current_statement_begin__ = 713;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3440,10 +3521,10 @@ public:
 
                 }
             }
-            current_statement_begin__ = 703;
+            current_statement_begin__ = 716;
             if (as_bool(logical_gt(nvars12,0))) {
                 {
-                current_statement_begin__ = 704;
+                current_statement_begin__ = 717;
                 local_scalar_t__ dummy;
                 (void) dummy;  // dummy to suppress unused var warning
 
@@ -3646,42 +3727,42 @@ public:
         (void) DUMMY_VAR__;  // suppress unused var warning
 
         try {
-            current_statement_begin__ = 517;
+            current_statement_begin__ = 515;
             validate_non_negative_index("beta01", "K01", K01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta01(static_cast<Eigen::VectorXd::Index>(K01));
             (void) beta01;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta01, DUMMY_VAR__);
             stan::math::fill(beta01,DUMMY_VAR__);
-            current_statement_begin__ = 518;
+            current_statement_begin__ = 516;
             validate_non_negative_index("beta02", "K02", K02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta02(static_cast<Eigen::VectorXd::Index>(K02));
             (void) beta02;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta02, DUMMY_VAR__);
             stan::math::fill(beta02,DUMMY_VAR__);
-            current_statement_begin__ = 519;
+            current_statement_begin__ = 517;
             validate_non_negative_index("beta12", "K12", K12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  beta12(static_cast<Eigen::VectorXd::Index>(K12));
             (void) beta12;  // dummy to suppress unused var warning
 
             stan::math::initialize(beta12, DUMMY_VAR__);
             stan::math::fill(beta12,DUMMY_VAR__);
-            current_statement_begin__ = 522;
+            current_statement_begin__ = 520;
             validate_non_negative_index("coefs01", "nvars01", nvars01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs01(static_cast<Eigen::VectorXd::Index>(nvars01));
             (void) coefs01;  // dummy to suppress unused var warning
 
             stan::math::initialize(coefs01, DUMMY_VAR__);
             stan::math::fill(coefs01,DUMMY_VAR__);
-            current_statement_begin__ = 523;
+            current_statement_begin__ = 521;
             validate_non_negative_index("coefs02", "nvars02", nvars02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs02(static_cast<Eigen::VectorXd::Index>(nvars02));
             (void) coefs02;  // dummy to suppress unused var warning
 
             stan::math::initialize(coefs02, DUMMY_VAR__);
             stan::math::fill(coefs02,DUMMY_VAR__);
-            current_statement_begin__ = 524;
+            current_statement_begin__ = 522;
             validate_non_negative_index("coefs12", "nvars12", nvars12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  coefs12(static_cast<Eigen::VectorXd::Index>(nvars12));
             (void) coefs12;  // dummy to suppress unused var warning
@@ -3690,50 +3771,50 @@ public:
             stan::math::fill(coefs12,DUMMY_VAR__);
 
 
-            current_statement_begin__ = 527;
+            current_statement_begin__ = 525;
             if (as_bool(logical_gt(K01,0))) {
 
-                current_statement_begin__ = 528;
+                current_statement_begin__ = 526;
                 stan::math::assign(beta01, make_beta(z_beta01,prior_dist01,prior_mean01,prior_scale01, pstream__));
             }
-            current_statement_begin__ = 531;
+            current_statement_begin__ = 529;
             if (as_bool(logical_gt(K02,0))) {
 
-                current_statement_begin__ = 532;
+                current_statement_begin__ = 530;
                 stan::math::assign(beta02, make_beta(z_beta02,prior_dist02,prior_mean02,prior_scale02, pstream__));
             }
-            current_statement_begin__ = 535;
+            current_statement_begin__ = 533;
             if (as_bool(logical_gt(K12,0))) {
 
-                current_statement_begin__ = 536;
+                current_statement_begin__ = 534;
                 stan::math::assign(beta12, make_beta(z_beta12,prior_dist12,prior_mean12,prior_scale12, pstream__));
             }
-            current_statement_begin__ = 541;
+            current_statement_begin__ = 539;
             if (as_bool(logical_gt(nvars01,0))) {
 
-                current_statement_begin__ = 542;
+                current_statement_begin__ = 540;
                 stan::math::assign(coefs01, elt_multiply(z_coefs01,prior_scale_for_aux01));
             }
-            current_statement_begin__ = 544;
+            current_statement_begin__ = 542;
             if (as_bool(logical_gt(nvars02,0))) {
 
-                current_statement_begin__ = 545;
+                current_statement_begin__ = 543;
                 stan::math::assign(coefs02, elt_multiply(z_coefs02,prior_scale_for_aux02));
             }
-            current_statement_begin__ = 547;
+            current_statement_begin__ = 545;
             if (as_bool(logical_gt(nvars12,0))) {
 
-                current_statement_begin__ = 548;
+                current_statement_begin__ = 546;
                 stan::math::assign(coefs12, elt_multiply(z_coefs12,prior_scale_for_aux12));
             }
 
             // validate transformed parameters
+            current_statement_begin__ = 515;
+            current_statement_begin__ = 516;
             current_statement_begin__ = 517;
-            current_statement_begin__ = 518;
-            current_statement_begin__ = 519;
+            current_statement_begin__ = 520;
+            current_statement_begin__ = 521;
             current_statement_begin__ = 522;
-            current_statement_begin__ = 523;
-            current_statement_begin__ = 524;
 
             // write transformed parameters
             if (include_tparams__) {
@@ -3758,36 +3839,36 @@ public:
             }
             if (!include_gqs__) return;
             // declare and define generated quantities
-            current_statement_begin__ = 714;
+            current_statement_begin__ = 727;
             validate_non_negative_index("alpha01", "has_intercept01", has_intercept01);
             vector<local_scalar_t__> alpha01(has_intercept01);
             stan::math::initialize(alpha01, DUMMY_VAR__);
             stan::math::fill(alpha01,DUMMY_VAR__);
-            current_statement_begin__ = 715;
+            current_statement_begin__ = 728;
             validate_non_negative_index("alpha02", "has_intercept02", has_intercept02);
             vector<local_scalar_t__> alpha02(has_intercept02);
             stan::math::initialize(alpha02, DUMMY_VAR__);
             stan::math::fill(alpha02,DUMMY_VAR__);
-            current_statement_begin__ = 716;
+            current_statement_begin__ = 729;
             validate_non_negative_index("alpha12", "has_intercept12", has_intercept12);
             vector<local_scalar_t__> alpha12(has_intercept12);
             stan::math::initialize(alpha12, DUMMY_VAR__);
             stan::math::fill(alpha12,DUMMY_VAR__);
-            current_statement_begin__ = 718;
+            current_statement_begin__ = 731;
             validate_non_negative_index("aux01", "nvars01", nvars01);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  aux01(static_cast<Eigen::VectorXd::Index>(nvars01));
             (void) aux01;  // dummy to suppress unused var warning
 
             stan::math::initialize(aux01, DUMMY_VAR__);
             stan::math::fill(aux01,DUMMY_VAR__);
-            current_statement_begin__ = 719;
+            current_statement_begin__ = 732;
             validate_non_negative_index("aux02", "nvars02", nvars02);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  aux02(static_cast<Eigen::VectorXd::Index>(nvars02));
             (void) aux02;  // dummy to suppress unused var warning
 
             stan::math::initialize(aux02, DUMMY_VAR__);
             stan::math::fill(aux02,DUMMY_VAR__);
-            current_statement_begin__ = 720;
+            current_statement_begin__ = 733;
             validate_non_negative_index("aux12", "nvars12", nvars12);
             Eigen::Matrix<local_scalar_t__,Eigen::Dynamic,1>  aux12(static_cast<Eigen::VectorXd::Index>(nvars12));
             (void) aux12;  // dummy to suppress unused var warning
@@ -3796,46 +3877,46 @@ public:
             stan::math::fill(aux12,DUMMY_VAR__);
 
 
-            current_statement_begin__ = 723;
+            current_statement_begin__ = 736;
             if (as_bool(logical_eq(type01,4))) {
 
-                current_statement_begin__ = 724;
+                current_statement_begin__ = 737;
                 stan::math::assign(aux01, multiply(coefs01,stan::math::exp((log_crude_event_rate01 - dot_product(x_bar01,beta01)))));
             } else {
 
-                current_statement_begin__ = 726;
+                current_statement_begin__ = 739;
                 stan::math::assign(aux01, coefs01);
-                current_statement_begin__ = 727;
+                current_statement_begin__ = 740;
                 stan::model::assign(alpha01, 
                             stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
                             ((log_crude_event_rate01 - dot_product(x_bar01,beta01)) + get_base1(gamma01,1,"gamma01",1)), 
                             "assigning variable alpha01");
             }
-            current_statement_begin__ = 729;
+            current_statement_begin__ = 742;
             if (as_bool(logical_eq(type02,4))) {
 
-                current_statement_begin__ = 730;
+                current_statement_begin__ = 743;
                 stan::math::assign(aux02, multiply(coefs02,stan::math::exp((log_crude_event_rate02 - dot_product(x_bar02,beta02)))));
             } else {
 
-                current_statement_begin__ = 732;
+                current_statement_begin__ = 745;
                 stan::math::assign(aux02, coefs02);
-                current_statement_begin__ = 733;
+                current_statement_begin__ = 746;
                 stan::model::assign(alpha02, 
                             stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
                             ((log_crude_event_rate02 - dot_product(x_bar02,beta02)) + get_base1(gamma02,1,"gamma02",1)), 
                             "assigning variable alpha02");
             }
-            current_statement_begin__ = 735;
+            current_statement_begin__ = 748;
             if (as_bool(logical_eq(type12,4))) {
 
-                current_statement_begin__ = 736;
+                current_statement_begin__ = 749;
                 stan::math::assign(aux12, multiply(coefs12,stan::math::exp((log_crude_event_rate12 - dot_product(x_bar12,beta12)))));
             } else {
 
-                current_statement_begin__ = 738;
+                current_statement_begin__ = 751;
                 stan::math::assign(aux12, coefs12);
-                current_statement_begin__ = 739;
+                current_statement_begin__ = 752;
                 stan::model::assign(alpha12, 
                             stan::model::cons_list(stan::model::index_uni(1), stan::model::nil_index_list()), 
                             ((log_crude_event_rate12 - dot_product(x_bar12,beta12)) + get_base1(gamma12,1,"gamma12",1)), 
@@ -3843,12 +3924,12 @@ public:
             }
 
             // validate generated quantities
-            current_statement_begin__ = 714;
-            current_statement_begin__ = 715;
-            current_statement_begin__ = 716;
-            current_statement_begin__ = 718;
-            current_statement_begin__ = 719;
-            current_statement_begin__ = 720;
+            current_statement_begin__ = 727;
+            current_statement_begin__ = 728;
+            current_statement_begin__ = 729;
+            current_statement_begin__ = 731;
+            current_statement_begin__ = 732;
+            current_statement_begin__ = 733;
 
             // write generated quantities
             for (int k_0__ = 0; k_0__ < has_intercept01; ++k_0__) {

@@ -1,26 +1,23 @@
 roxygen2::roxygenise(clean = TRUE)
 
-betas01_t = c(trt = -0.2)
-betas02_t = c(trt =-0.4)
-betas12_t = c(trt =-0.5)
-lambdas01_t = 0.1
-lambdas02_t = 0.2
-lambdas12_t = 0.3
-gammas01_t = 1.5
-gammas02_t = 1
-gammas12_t = 2
+# betas01_t = c(trt = -0.2)
+# betas02_t = c(trt =-0.4)
+# betas12_t = c(trt =-0.5)
+lambdas01_t = 0.33
+lambdas02_t = 0.36
+lambdas12_t = 0.39
+gammas01_t = 1.6
+gammas02_t = 1.9
+gammas12_t = 2.2
 cens = c(4.5, 5.5)
 
 set.seed(9911)
-covs <- data.frame(id = 1:2000, trt = stats::rbinom(2000, 1L, 0.5))
+covs <- data.frame(id = 1:4000, trt = stats::rbinom(4000, 1L, 0.5))
 
 sim_wei <- rsimid(
   dist01 = "weibull",
   dist02 = "weibull",
   dist12 = "weibull",
-  betas01 = betas01_t,
-  betas02 = betas02_t,
-  betas12 = betas12_t,
   lambdas01 = lambdas01_t,
   lambdas02 = lambdas02_t,
   lambdas12 = lambdas12_t,
@@ -36,10 +33,10 @@ sim_wei$time_diff = sim_wei$os_time - sim_wei$df_time
 library(survival)
 library(rstan)
 rstan_options(auto_write = TRUE)
-options(mc.cores = 2)
-stanfit <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
-                     formula02 = Surv(time=os_time,event=os_event)~trt,
-                     formula12 = Surv(time=time_diff,event=os_event)~trt,
+options(mc.cores = 4)
+stanfit <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~1,
+                     formula02 = Surv(time=os_time,event=os_event)~1,
+                     formula12 = Surv(time=time_diff,event=os_event)~1,
                      data = sim_wei,
                      basehaz01 = "weibull",
                      basehaz02 = "weibull",
@@ -53,19 +50,99 @@ stanfit <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
                      prior12           = rstanarm::normal(),
                      prior_intercept12 = rstanarm::normal(),
                      prior_aux12       = rstanarm::normal(),
-                    iter = 1000,
-                    chains = 2,
-                    control = list(adapt_delta = 0.8)
+                    iter = 2000,
+                    chains = 4,
+                    control = list(adapt_delta = 0.99)
 )
 
 
-stanfit2 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
-                    formula02 = Surv(time=os_time,event=os_event)~trt,
-                    formula12 = Surv(time=time_diff,event=os_event)~trt,
-                    data = sim_wei,
-                    basehaz01 = "ms",
-                    basehaz02 = "ms",
-                    basehaz12 = "ms",
+## ----plot-alpha-vs-test-------------------------------------------------- BAYES PLOT -
+  library(bayesplot)
+posterior <- as.array(stanfit)
+dim(posterior)
+dimnames(posterior)
+
+color_scheme_set("gray")
+p1 <- mcmc_hex(posterior, pars = c("(Intercept)_1", "weibull-shape_1")) +
+  geom_point(aes(x = log(lambdas01_t), y = gammas01_t ), shape = 25, size = 3, fill = "black") + ggtitle('Transition 0 -> 1')  +
+  labs(x = "scale", y = "shape")
+
+p2 <- mcmc_hex(posterior, pars = c("(Intercept)_2", "weibull-shape_2")) +
+  geom_point(aes(x = log(lambdas02_t), y = gammas02_t ), shape = 25, size = 3, fill = "black") + ggtitle('Transition 0 -> 2')  +
+  labs(x = "scale", y = "shape")
+
+p3 <- mcmc_hex(posterior, pars = c("(Intercept)_3", "weibull-shape_3")) +
+  geom_point(aes(x = log(lambdas12_t), y = gammas12_t ), shape = 25, size = 3, fill = "black") + ggtitle('Transition 1 -> 2')  +
+  labs(x = "scale", y = "shape")
+
+
+library(cowplot)
+title <- ggdraw() + draw_label("Posterior joint distribution of Weibull's shape and scale showing true parameter values", fontface='bold')
+
+p <- cowplot::plot_grid(p1, p2, p3, ncol = 3)
+pp <- cowplot::plot_grid(title, p, ncol = 1, rel_heights=c(0.1, 1))
+pp
+
+ggsave(plot = pp, filename = "nipp_wei.png", height = 3.8, width = 7, units = "in", dpi = 600)
+
+
+# --------------------------------------------------
+
+exp_out <- as.data.frame(summary(stanfit))
+exp_out <- exp_out[1:6, ]
+
+actual <- c(
+  "(Intercept)_1"  = log(lambdas01_t),
+  "weibull-shape_1" = gammas01_t,
+
+  "(Intercept)_2" = log(lambdas02_t),
+  "weibull-shape_2" = gammas02_t,
+
+  "(Intercept)_3" = log(lambdas12_t),
+  "weibull-shape_3" = gammas12_t)
+
+exp_out <- cbind(actual, exp_out)
+
+write.csv(exp_out, "actual_weibull.csv")
+
+pp <- pairs(stanfit$stanfit)
+
+ggsave(plot = pp, filename = "pp_wei.png", height = 3.8, width = 7, units = "in", dpi = 600)
+
+lambdas01_t = 0.08
+lambdas02_t = 0118
+lambdas12_t = 0513
+gammas01_t = 0.22
+gammas02_t = 0.34
+gammas12_t = 0.56
+cens = c(4.5, 5.5)
+
+set.seed(9911)
+covs <- data.frame(id = 1:20000, trt = stats::rbinom(20000, 1L, 0.5))
+
+sim_gomp <- rsimid(
+  dist01 = "gompertz",
+  dist02 = "gompertz",
+  dist12 = "gompertz",
+  lambdas01 = lambdas01_t,
+  lambdas02 = lambdas02_t,
+  lambdas12 = lambdas12_t,
+  gammas01 = gammas01_t,
+  gammas02 = gammas02_t,
+  gammas12 = gammas12_t,
+  x = covs,
+  cens = cens
+)
+
+sim_gomp$time_diff = sim_gomp$os_time - sim_gomp$df_time
+
+stanfit2 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~1,
+                    formula02 = Surv(time=os_time,event=os_event)~1,
+                    formula12 = Surv(time=time_diff,event=os_event)~1,
+                    data = sim_gomp,
+                    basehaz01 = "gompertz",
+                    basehaz02 = "gompertz",
+                    basehaz12 = "gompertz",
                     prior01           = rstanarm::normal(),
                     prior_intercept01 = rstanarm::normal(),
                     prior_aux01       = rstanarm::normal(),
@@ -75,49 +152,74 @@ stanfit2 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
                     prior12           = rstanarm::normal(),
                     prior_intercept12 = rstanarm::normal(),
                     prior_aux12       = rstanarm::normal(),
-                    iter = 1000,
-                    chains = 2,
-                    control = list(adapt_delta = 0.8)
+                    iter = 4000,
+                    chains = 4,
+                    control = list(adapt_delta = 0.99)
 )
 
-stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
-                     formula02 = Surv(time=os_time,event=os_event)~trt,
-                     formula12 = Surv(time=time_diff,event=os_event)~trt,
-                     data = sim_wei,
-                     basehaz01 = "exp",
-                     basehaz02 = "exp",
-                     basehaz12 = "exp",
-                     prior01           = rstanarm::normal(),
-                     prior_intercept01 = rstanarm::normal(),
-                     prior_aux01       = rstanarm::normal(),
-                     prior02           = rstanarm::normal(),
-                     prior_intercept02 = rstanarm::normal(),
-                     prior_aux02       = rstanarm::normal(),
-                     prior12           = rstanarm::normal(),
-                     prior_intercept12 = rstanarm::normal(),
-                     prior_aux12       = rstanarm::normal(),
-                     iter = 1000,
-                     chains = 2,
-                     control = list(adapt_delta = 0.8)
-)
+gomp_out <- as.data.frame(summary(stanfit2))
 
-print(fit)
-rstan::traceplot(fit, 'lp__')
+gomp_out <- gomp_out[1:6, ]
 
-rstan::traceplot(fit, c('beta01','beta02', 'beta12'), ncol = 1)
+actual <- c(
+  "(Intercept)_1"  = log(lambdas01_t),
+  "gompertz-scale_1" = gammas01_t,
+
+  "(Intercept)_2" = log(lambdas02_t),
+  "gompertz-scale_2" = gammas02_t,
+
+  "(Intercept)_3" = log(lambdas12_t),
+  "gompertz-scale_3" = gammas12_t)
+
+gomp_out <- cbind(actual, gomp_out)
+
+write.csv(gomp_out, "actual_gompertz.csv")
 
 library(cowplot)
 
 ## ----sim-extract-alpha---------------------------------------------------
-pp_lambda01 <- exp( rstan::extract(fit,'alpha01')$alpha01 )
+pp_lambda01 <- exp( rstan::extract(stanfit2$stanfit,'alpha01')$alpha01 )
+pp_lambda02 <- exp( rstan::extract(stanfit2$stanfit,'alpha02')$alpha02 )
+pp_lambda12 <- exp( rstan::extract(stanfit2$stanfit,'alpha12')$alpha12 )
+
+
+pp_gamma01 <- rstan::extract(stanfit2$stanfit,'aux01')$aux01
+pp_gamma02 <- rstan::extract(stanfit2$stanfit,'aux02')$aux02
+pp_gamma12 <- rstan::extract(stanfit2$stanfit,'aux12')$aux12
+
 pp_gamma01 <- rstan::extract(fit,'aux01')$aux01
 pp_beta01 <- rstan::extract(fit,'beta01')$beta01
 
 ## ----plot-alpha-vs-test--------------------------------------------------
-ggplot(data.frame(lambda = pp_lambda01, gamma = pp_gamma01)) +
+library(bayesplot)
+posterior <- as.array(stanfit)
+dim(posterior)
+dimnames(posterior)
+
+color_scheme_set("gray")
+mcmc_hex(posterior, pars = c("(Intercept)_1", "weibull-shape_1")) +
+  geom_point(aes(x= ))
+  
+
+
+
+p1 <- ggplot(data.frame(lambda = pp_lambda01)) +
   geom_density(aes(x = lambda)) +
   geom_vline(aes(xintercept = lambdas01_t), colour = 'red') +
-  ggtitle('Posterior distribution of alpha\nshowing true value in red')
+  ggtitle('Posterior distribution of lambda 0 -> 1\nshowing true value')
+
+p2 <- ggplot(data.frame(lambda = pp_lambda02)) +
+  geom_density(aes(x = lambda)) +
+  geom_vline(aes(xintercept = lambdas02_t), colour = 'red') +
+  ggtitle('Posterior distribution of lambda 0 -> 2\nshowing true value')
+
+p3 <- ggplot(data.frame(lambda = pp_lambda12)) +
+  geom_density(aes(x = lambda)) +
+  geom_vline(aes(xintercept = lambdas12_t), colour = 'red') +
+  ggtitle('Posterior distribution of lambda 1 -> 2\nshowing true value')
+
+cowplot::plot_grid(p1, p2, p3)
+
 
 ## ----plot-mu-vs-test-----------------------------------------------------
 ggplot(data.frame(lambda = pp_lambda01, gamma = pp_gamma01)) +
@@ -125,12 +227,63 @@ ggplot(data.frame(lambda = pp_lambda01, gamma = pp_gamma01)) +
   geom_vline(aes(xintercept = gammas01_t), colour = 'red') +
   ggtitle('Posterior distribution of mu\nshowing true value in red')
 
-## ----plot-mu-vs-alpha----------------------------------------------------
-p1 <- ggplot(data.frame(lambda = pp_lambda01, gamma = pp_gamma01)) +
-  geom_density2d(aes(x = lambda, y = gamma), linetype = "dashed") +
-  geom_point(aes(x = lambdas01_t, y = gammas01_t), colour = 'red', size = 4) +
-  ggtitle('Posterior distributions of lambda and gamma\nshowing true parameter values')
+ggplot(data.frame(lambda = pp_lambda02, gamma = pp_gamma02)) +
+  geom_density(aes(x = gamma)) +
+  geom_vline(aes(xintercept = gammas02_t), colour = 'red') +
+  ggtitle('Posterior distribution of mu\nshowing true value in red')
 
+
+## ----plot-mu-vs-alpha----------------------------------------------------
+
+pp_joint01 <- pp_lambda01 *  pp_gamma01
+
+library(ggsubplot)
+plot_data <- data.frame(lambda = pp_lambda01,
+                        gamma = pp_gamma01,
+                        joint = pp_joint01)
+
+p1 <- ggplot(plot_data, aes(x=lambda, y=gamma, z = joint)) + 
+  geom_contour(aes(x = lambda, y = gamma, colour = stat(level)),
+                 linetype = "dashed") +
+  geom_point(aes(x = lambdas01_t, y = gammas01_t),
+             colour = 'red', 
+             size = 2) + 
+  ggtitle('Transition 0 -> 1')  +
+  labs(x = "rate", y = "shape")
+
+#ggtitle('Posterior distributions of rate and shape \nshowing true parameter values')
+
+p2 <- ggplot(data.frame(lambda = pp_lambda02, 
+                        gamma = pp_gamma02,
+                        joint = pp_lambda02 * pp_gamma02), 
+             aes(x = lambda, y = gamma, z = joint)) +
+  geom_contour(aes(x = lambda, y = gamma, colour = stat(level)), linetype = "dashed", colour = "white", n = 100, contour = TRUE) +
+  geom_point(aes(x = lambdas02_t, y = gammas02_t), colour = 'red', size = 2) + ggtitle('Transition 0 -> 2')  +
+  labs(x = "rate", y = "shape")
+
+
+  # ggtitle('Posterior distributions of lambda and gamma\nshowing true parameter values') +
+  # labs(x = "rate", y = "sahpe")
+
+p3 <- ggplot(data.frame(lambda = pp_lambda12, 
+                        gamma = pp_gamma12,
+                        joint = pp_lambda12 * pp_gamma12),
+             aes(x = lambda, y = gamma, z = joint) ) +
+  geom_contour(aes(x = lambda, y = gamma, colour = stat(level)), linetype = "dashed") +
+  geom_point(aes(x = lambdas12_t, y = gammas12_t), colour = 'red', size = 2) + ggtitle('Transition 1 -> 2')  +
+  labs(x = "rate", y = "shape")
+  # ggtitle('Posterior distributions of lambda and gamma\nshowing true parameter values')
+library(cowplot)
+title <- ggdraw() + draw_label("Posterior joint distribution of Gompertz shape and rate showing true parameter values", fontface='bold')
+
+ggsave(plot = cowplot::plot_grid( title,
+                                  cowplot::plot_grid(p1, p2, p3, ncol = 3), ncol = 1, rel_heights=c(0.1, 1) ), 
+       
+       filename = "pp_joint_gompertz.png", height = 3.8, width = 7, units = "in", dpi = 600)
+
+p <- cowplot::plot_grid(p1, p2, p3, ncol = 3)
+p <- cowplot::plot_grid(title, p, ncol = 1, rel_heights=c(0.1, 1))
+p
 ## ----plot-beta-vs-test-----------------------------------------------------
 p2 <- ggplot(data.frame(beta = pp_beta01)) +
   geom_density(aes(x = beta)) +
@@ -149,8 +302,57 @@ mean(pp_gamma01 >= gammas01_t)
 mean(pp_lambda01 >= lambdas01_t & pp_gamma01 >= gammas01_t)
 
 
+### Royston Parmar hazard model
+
+betas01_t = c(trt = -0.5)
+betas02_t = c(trt =-0.1)
+betas12_t = c(trt =-0.3)
+
+fn <- function(t, x, betas, ...)
+  (-1 + 0.02 * t - 0.03 * t ^ 2 + 0.005 * t ^ 3 + x * betas)
+cens = c(4.5, 5.5)
+
+set.seed(9911)
+covs <- data.frame(id = 1:200, trt = stats::rbinom(20000, 1L, 0.5))
+
+sim_rp <- rsimid(
+  betas01 = betas01_t,
+  betas02 = betas02_t,
+  betas12 = betas12_t,
+  lambdas12 = NULL,
+  loghazard01 = fn,
+  loghazard02 = fn,
+  loghazard12 = fn,
+  x = covs,
+  cens = cens
+)
 
 
+stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
+                     formula02 = Surv(time=os_time,event=os_event)~trt,
+                     formula12 = Surv(time=time_diff,event=os_event)~trt,
+                     data = sim_rp,
+                     basehaz01 = "ms",
+                     basehaz02 = "ms",
+                     basehaz12 = "ms",
+                     prior01           = rstanarm::normal(),
+                     prior_intercept01 = rstanarm::normal(),
+                     prior_aux01       = rstanarm::normal(),
+                     prior02           = rstanarm::normal(),
+                     prior_intercept02 = rstanarm::normal(),
+                     prior_aux02       = rstanarm::normal(),
+                     prior12           = rstanarm::normal(),
+                     prior_intercept12 = rstanarm::normal(),
+                     prior_aux12       = rstanarm::normal(),
+                     iter = 1000,
+                     chains = 2,
+                     control = list(adapt_delta = 0.8)
+)
+
+print(fit)
+rstan::traceplot(fit, 'lp__')
+
+rstan::traceplot(fit, c('beta01','beta02', 'beta12'), ncol = 1)
 
 
 

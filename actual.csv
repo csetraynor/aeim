@@ -1,0 +1,10 @@
+"","x"
+"(Intercept)_1",-2.30258509299405
+"trt_1.trt",-0.2
+"weibull-shape_1",1.5
+"(Intercept)_2",-1.6094379124341
+"trt_2.trt",-0.4
+"weibull-shape_2",1
+"(Intercept)_3",-1.20397280432594
+"trt_3.trt",-0.5
+"weibull-shape_3",2

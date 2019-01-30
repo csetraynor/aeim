@@ -38,8 +38,6 @@ functions {
       return res;
     }
 
-
-
   /**
     * Log hazard for B-spline model
   *
@@ -618,10 +616,15 @@ model {
     if (nrcens01 > 0) target +=  mspline_log_surv(eta_rcens01, ibasis_rcens01, coefs01);
     if (nevent01 > 0) target +=  mspline_log_haz(eta_event01,  basis_event01, coefs01);
     if (nevent01 > 0) target +=  mspline_log_surv(eta_event01,  ibasis_event01, coefs01);
-  } else if (type02 == 05) { // exponential model
+  } else if (type01 == 5) { // exponential model
     if (nevent01 > 0) target +=  exponential_log_haz(eta_event01);
     if (nevent01 > 0) target +=  exponential_log_surv(eta_event01, t_event01);
     if (nrcens01 > 0) target +=  exponential_log_surv(eta_rcens01, t_rcens01);
+  } else if (type01 == 6) { // gompertz model
+  real scale01 = coefs01[1];
+    if (nevent01 > 0) target +=  gompertz_log_haz(eta_event01, t_event01, scale01);
+    if (nevent01 > 0) target +=  gompertz_log_surv(eta_event01, t_event01, scale01);
+    if (nrcens01 > 0) target +=  gompertz_log_surv(eta_rcens01, t_rcens01, scale01);
   } else {
     reject("Bug found: invalid baseline hazard 01 (without quadrature).");
   }
@@ -635,10 +638,15 @@ model {
     if (nrcens02 > 0) target +=  mspline_log_surv(eta_rcens02, ibasis_rcens02, coefs02);
     if (nevent02 > 0) target +=  mspline_log_haz(eta_event02, basis_event02, coefs02);
     if (nevent02 > 0) target +=  mspline_log_surv(eta_event02, ibasis_event02, coefs02);
-  } else if (type02 == 05) { // exponential model
+  } else if (type02 == 5) { // exponential model
     if (nevent02 > 0) target +=  exponential_log_haz(eta_event02);
     if (nevent02 > 0) target +=  exponential_log_surv(eta_event02, t_event02);
     if (nrcens02 > 0) target +=  exponential_log_surv(eta_rcens02, t_rcens02);
+  } else if (type02 == 6) { // gompertz model
+  real scale02 = coefs02[1];
+    if (nevent02 > 0) target +=  gompertz_log_haz(eta_event02, t_event02, scale02);
+    if (nevent02 > 0) target +=  gompertz_log_surv(eta_event02, t_event02, scale02);
+    if (nrcens02 > 0) target +=  gompertz_log_surv(eta_rcens02, t_rcens02, scale02);
   } else {
     reject("Bug found: invalid baseline hazard 02 (without quadrature).");
   }
@@ -656,6 +664,11 @@ model {
     if (nrcens12 > 0) target +=  exponential_log_surv(eta_rcens12, t_rcens12);
     if (nevent12 > 0) target +=  exponential_log_haz(eta_event12);
     if (nevent12 > 0) target +=  exponential_log_surv(eta_event12, t_event12);
+  } else if (type12 == 6) { // gompertz model
+  real scale12 = coefs12[1];
+    if (nrcens12 > 0) target +=  gompertz_log_surv(eta_rcens12, t_rcens12, scale12);
+    if (nevent12 > 0) target +=  gompertz_log_haz(eta_event12, t_event12, scale12);
+    if (nevent12 > 0) target +=  gompertz_log_surv(eta_event12, t_event12, scale12);
   } else {
     reject("Bug found: invalid baseline hazard 12 (without quadrature).");
   }

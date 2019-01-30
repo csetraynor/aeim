@@ -6,12 +6,54 @@ rsimid <- function(dist01 = c("weibull", "exponential", "gompertz")  ,
                    lambdas01, gammas01, betas01,
                    lambdas02, gammas02, betas02,
                    lambdas12, gammas12, betas12,
+                   hazard01, hazard02, hazard12,
+                   loghazard01, loghazard02, loghazard12,
                    tde, tdefunction = NULL,
                    mixture = FALSE, pmix = 0.5, hazard, loghazard,
                    cumhazard, logcumhazard,
                    x, cens , idvar = NULL, ids = NULL, nodes = 15,
                    interval = c(1E-8, 500),
                    seed = sample.int(.Machine$integer.max, 1), ...){
+
+  if (missing(lambdas01))
+    lambdas01 <- NULL
+  if (missing(lambdas02))
+    lambdas02 <- NULL
+  if (missing(lambdas12)){
+    lambdas12 <- NULL
+  }
+
+  if (missing(tde)){
+    tde <- NULL
+  }
+
+  if (missing(gammas01))
+    gammas01 <- NULL
+  if (missing(gammas02))
+    gammas02 <- NULL
+  if (missing(gammas12))
+    gammas12 <- NULL
+
+  if (missing(betas01))
+    betas01 <- NULL
+  if (missing(betas02))
+    betas02 <- NULL
+  if (missing(betas12))
+    betas12 <- NULL
+
+  if (missing(hazard01))
+    hazard01 <- NULL
+  if (missing(hazard02))
+    hazard02 <- NULL
+  if (missing(hazard12))
+    hazard12 <- NULL
+
+  if (missing(loghazard01))
+    loghazard01 <- NULL
+  if (missing(loghazard02))
+    loghazard02 <- NULL
+  if (missing(loghazard12))
+    loghazard12 <- NULL
 
   if (!is.null(ids) == is.null(idvar))
     stop("Both 'idvar' and 'ids' must be supplied together.")
@@ -24,41 +66,119 @@ rsimid <- function(dist01 = c("weibull", "exponential", "gompertz")  ,
     ids <- seq(N)
   }
 
-  inverted_surv01 <- get_inverted_surv(dist = dist01,
-                                     lambdas = lambdas01, gammas = gammas01)
+  if(is.null(hazard01) && is.null(loghazard01)){
+    inverted_surv01 <- get_inverted_surv(dist = dist01,
+                                         lambdas = lambdas01,
+                                         gammas = gammas01)
 
-  R <- sapply(ids, function(i) {
-    x_i <- subset_df(x, i, idvar = idvar)
-    betas_i <- subset_df(betas01, i, idvar = idvar)
-    u_i <- stats::runif(1)
-    t_i <- inverted_surv01(u = u_i, x = x_i, betas = betas_i)
-    return(t_i)
-  })
+    R <- sapply(ids, function(i) {
+      x_i <- subset_df(x, i, idvar = idvar)
+      betas_i <- subset_df(betas01, i, idvar = idvar)
+      u_i <- stats::runif(1)
+      t_i <- inverted_surv01(u = u_i, x = x_i, betas = betas_i)
+      return(t_i)
+    })
 
-  inverted_surv02 <- get_inverted_surv(dist = dist02,
-                                       lambdas = lambdas02, gammas = gammas02)
+    inverted_surv02 <- get_inverted_surv(dist = dist02,
+                                         lambdas = lambdas02, gammas = gammas02)
 
-  D <- sapply(ids, function(i) {
-    x_i <- subset_df(x, i, idvar = idvar)
-    betas_i <- subset_df(betas02, i, idvar = idvar)
-    u_i <- stats::runif(1)
-    t_i <- inverted_surv02(u = u_i, x = x_i, betas = betas_i)
-    return(t_i)
-  })
+    D <- sapply(ids, function(i) {
+      x_i <- subset_df(x, i, idvar = idvar)
+      betas_i <- subset_df(betas02, i, idvar = idvar)
+      u_i <- stats::runif(1)
+      t_i <- inverted_surv02(u = u_i, x = x_i, betas = betas_i)
+      return(t_i)
+    })
 
+    yesR <- R < D
 
-  yesR <- R < D
+    inverted_surv12 <- get_inverted_surv(dist = dist12,
+                                         lambdas = lambdas12, gammas = gammas12)
 
-  inverted_surv12 <- get_inverted_surv(dist = dist12,
-                                       lambdas = lambdas12, gammas = gammas12)
+    tt12 <- sapply(seq_along(ids[yesR]), function(i) {
+      x_i <- subset_df(x[yesR, ], i, idvar = idvar)
+      betas_i <- subset_df(betas12, i, idvar = idvar)
+      u_i <- stats::runif(1)
+      t_i <- inverted_surv12(u = u_i, x = x_i, betas = betas_i)
+      return(t_i)
+    })
+  } else { # user-defined hazard or log hazard
+    if (!is.null(tde))
+      stop("'tde' cannot be specified with a user-defined [log] hazard ",
+           "function; please just incorporate the time dependent effects ",
+           "into the [log] hazard function you are defining.")
+    if (!is.null(loghazard01)) {
+      hazard01 <- function(t, x, betas, ...) exp(loghazard01(t, x, betas, ...))
+    }
+    if (!is.null(loghazard02)) {
+      hazard02 <- function(t, x, betas, ...) exp(loghazard02(t, x, betas, ...))
+    }
+    if (!is.null(loghazard12)) {
+      hazard12 <- function(t, x, betas, ...) exp(loghazard12(t, x, betas, ...))
+    }
+    qq <- get_quadpoints(nodes)
+    R <- sapply(ids, function(i) {
+      x_i <- subset_df(x, i, idvar = idvar)
+      betas_i <- subset_df(betas01, i, idvar = idvar)
+      log_u_i <- log(stats::runif(1))
+      # check whether S(t) is still greater than random uniform variable u_i at the
+      # upper limit of uniroot's interval (otherwise uniroot will return an error)
+      at_limit <- rootfn_hazard(interval[2], hazard = hazard01, x = x_i,
+                                betas = betas_i, log_u = log_u_i, qq = qq)
+      if (is.nan(at_limit)) {
+        STOP_nan_at_limit()
+      } else if (at_limit > 0) { # individual will be censored anyway, so just return interval[2]
+          return(interval[2])
+      } else {
+        t_i <- stats::uniroot(
+          rootfn_hazard, hazard = hazard01, x = x_i, betas = betas_i,
+          log_u = log_u_i, qq = qq,  interval = interval)$root
+      }
+      return(t_i)
+    })
 
-  tt12 <- sapply(seq_along(ids[yesR]), function(i) {
-    x_i <- subset_df(x[yesR, ], i, idvar = idvar)
-    betas_i <- subset_df(betas12, i, idvar = idvar)
-    u_i <- stats::runif(1)
-    t_i <- inverted_surv12(u = u_i, x = x_i, betas = betas_i)
-    return(t_i)
-  })
+    D <- sapply(ids, function(i) {
+      x_i <- subset_df(x, i, idvar = idvar)
+      betas_i <- subset_df(betas02, i, idvar = idvar)
+      log_u_i <- log(stats::runif(1))
+      # check whether S(t) is still greater than random uniform variable u_i at the
+      # upper limit of uniroot's interval (otherwise uniroot will return an error)
+      at_limit <- rootfn_hazard(interval[2], hazard = hazard02, x = x_i,
+                                betas = betas_i, log_u = log_u_i, qq = qq)
+      if (is.nan(at_limit)) {
+        STOP_nan_at_limit()
+      } else if (at_limit > 0) { # individual will be censored anyway, so just return interval[2]
+        return(interval[2])
+      } else {
+        t_i <- stats::uniroot(
+          rootfn_hazard, hazard = hazard02, x = x_i, betas = betas_i,
+          log_u = log_u_i, qq = qq,  interval = interval)$root
+      }
+      return(t_i)
+    })
+
+    yesR <- R < D
+
+    tt12 <- sapply(seq_along(ids[yesR]), function(i) {
+      x_i <- subset_df(x, i, idvar = idvar)
+      betas_i <- subset_df(betas12, i, idvar = idvar)
+      log_u_i <- log(stats::runif(1))
+      # check whether S(t) is still greater than random uniform variable u_i at the
+      # upper limit of uniroot's interval (otherwise uniroot will return an error)
+      at_limit <- rootfn_hazard(interval[2], hazard = hazard12, x = x_i,
+                                betas = betas_i, log_u = log_u_i, qq = qq)
+      if (is.nan(at_limit)) {
+        STOP_nan_at_limit()
+      } else if (at_limit > 0) { # individual will be censored anyway, so just return interval[2]
+        return(interval[2])
+      } else {
+        t_i <- stats::uniroot(
+          rootfn_hazard, hazard = hazard12, x = x_i, betas = betas_i,
+          log_u = log_u_i, qq = qq,  interval = interval)$root
+      }
+      return(t_i)
+    })
+  }
 
   D[yesR] <- R[yesR] + tt12
 
@@ -95,6 +215,10 @@ rsimid <- function(dist01 = c("weibull", "exponential", "gompertz")  ,
   #ret$time_diff <- ret$os_time - ret$df_time
   return(ret)
 }
+
+
+
+
 
 #
 #
