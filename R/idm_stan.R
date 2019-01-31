@@ -829,3 +829,88 @@ idm_stan <- function(formula01,
 
   idmstan(fit)
 }
+
+
+
+handle_newdata <- function(formula01,
+                     formula02,
+                     formula12,
+                     data,
+                     basehaz01 = "ms",
+                     basehaz02 = "ms",
+                     basehaz12 = "ms",
+                     basehaz_ops01,
+                     basehaz_ops02,
+                     basehaz_ops12,
+                     prior01           = rstanarm::normal(),
+                     prior_intercept01 = rstanarm::normal(),
+                     prior_aux01       = rstanarm::normal(),
+                     prior02           = rstanarm::normal(),
+                     prior_intercept02 = rstanarm::normal(),
+                     prior_aux02       = rstanarm::normal(),
+                     prior12           = rstanarm::normal(),
+                     prior_intercept12 = rstanarm::normal(),
+                     prior_aux12       = rstanarm::normal(),
+                     prior_PD        = FALSE,
+                     algorithm       = c("sampling", "meanfield", "fullrank"),
+                     adapt_delta     = 0.95, ...
+){
+
+
+  #-----------------------------
+  # Pre-processing of arguments
+  #-----------------------------
+
+  if (!requireNamespace("survival"))
+    stop("the 'survival' package must be installed to use this function.")
+
+  if (missing(basehaz_ops01))
+    basehaz_ops01 <- NULL
+  if (missing(basehaz_ops02))
+    basehaz_ops02 <- NULL
+  if (missing(basehaz_ops12))
+    basehaz_ops12 <- NULL
+  basehaz_ops <- list(basehaz_ops01, basehaz_ops02, basehaz_ops12)
+
+  if (missing(data) || !inherits(data, "data.frame"))
+    stop("'data' must be a data frame.")
+
+  dots      <- list(...)
+  algorithm <- match.arg(algorithm)
+
+
+
+  ## Parse formula
+
+  formula <- list(formula01, formula02, formula12)
+  h <- length(formula)
+
+  formula <- lapply(formula, function(f) parse_formula(f, data))
+
+  ## Create data
+  data01 <- nruapply(0:1, function(o){
+    lapply(0:1, function(p) make_model_data(formula = formula[[1]], aux_formula = formula[[2]], data = data, cens = p, aux_cens = o))
+  }) # row subsetting etc.
+
+  data02 <- nruapply(0:1, function(o){
+    lapply(0:1, function(p) make_model_data(formula = formula[[2]], aux_formula = formula[[1]], data = data, cens = p, aux_cens = o))
+  }) # row subsetting etc.
+
+  data02 <- handle_data(data02)
+
+  data12 <- lapply(0:1, function(p) make_model_data(formula = formula[[3]], aux_formula = formula[[1]], data = data, cens = p, aux_cens = 1) ) # row subsetting etc.
+
+  nd01 <- sapply(data01, function(d) nrow(d))
+  nd02 <- sapply(data02, function(d) nrow(d))
+  nd12 <- sapply(data12, function(d) nrow(d))
+
+  ind01 <- cumsum(nd01)
+  ind02 <- cumsum(nd02)
+  ind12 <- cumsum(nd12)
+
+  data01 <- do.call(rbind, data01)
+  data02 <- do.call(rbind, data02)
+  data12 <- do.call(rbind, data12)
+
+  list(data01, data02, data12)
+}

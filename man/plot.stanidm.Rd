@@ -4,9 +4,9 @@
 \alias{plot.stanidm}
 \title{Plot stanidm}
 \usage{
-plot.stanidm(x, plotfun = "basehaz", pars = NULL, regex_pars = NULL,
-  ..., prob = 0.95, limits = c("ci", "none"), ci_geom_args = NULL,
-  labels = "auto")
+\method{plot}{stanidm}(x, plotfun = "basehaz", pars = NULL,
+  regex_pars = NULL, ..., prob = 0.95, limits = c("ci", "none"),
+  ci_geom_args = NULL, labels = "auto")
 }
 \arguments{
 \item{prob}{A scalar between 0 and 1 specifying the width to}
