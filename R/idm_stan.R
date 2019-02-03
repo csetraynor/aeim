@@ -6,9 +6,6 @@
 #' (exponential, Weibull and Gompertz) and flexible parametric (cubic
 #' spline-based) hazard models on the hazard scale, with covariates included
 #' under assumptions of either proportional or non-proportional hazards.
-#' Where relevant, non-proportional hazards are modelled using a flexible
-#' cubic spline-based function for the time-dependent effect (i.e. the
-#' time-dependent hazard ratio).
 #'
 #' @export
 #' @importFrom splines bs

@@ -2359,3 +2359,21 @@ handle_condition <- function(object, condition){
 handle_labels <- function(x){
   paste0("Transition_", seq_along(x))
 }
+
+# ------------- Helpers ---------------#
+#Compute point estimates and standard errors from pointwise vectors
+#
+# @param x A matrix.
+# @return An ncol(x) by 2 matrix with columns 'Estimate' and 'SE'
+#   and rownames equal to colnames(x).
+#
+table_of_estimates <- function(x) {
+  out <- cbind(
+    Estimate = matrixStats::colSums2(x),
+    SE = sqrt(nrow(x) * matrixStats::colVars(x))
+  )
+  rownames(out) <- colnames(x)
+  return(out)
+}
+
+

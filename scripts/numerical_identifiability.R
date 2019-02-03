@@ -12,7 +12,7 @@ gammas12_t = 2.2
 cens = c(4.5, 5.5)
 
 set.seed(9911)
-covs <- data.frame(id = 1:4000, trt = stats::rbinom(4000, 1L, 0.5))
+covs <- data.frame(id = 1:2000, trt = stats::rbinom(2000, 1L, 0.5))
 
 sim_wei <- rsimid(
   dist01 = "weibull",
@@ -359,7 +359,7 @@ sim_rp$time_diff = sim_rp$os_time - sim_rp$df_time
 stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
                      formula02 = Surv(time=os_time,event=os_event)~trt,
                      formula12 = Surv(time=time_diff,event=os_event)~trt,
-                     data = sim_rp,
+                     data = sim_wei,
                      basehaz01 = "ms",
                      basehaz02 = "ms",
                      basehaz12 = "ms",
@@ -376,6 +376,9 @@ stanfit3 <- idm_stan(formula01 = Surv(time=df_time,event=df_event)~trt,
                      chains = 4,
                      control = list(adapt_delta = 0.99)
 )
+
+looms <- loo(stanfit3, cores = 1, k_threshold = 0.7)
+loowei <- loo(stanfit, cores = 1, k_threshold = 0.7)
 
 exp_out <- as.data.frame(summary(stanfit3))
 exp_out <- exp_out[1:6, ]

@@ -187,20 +187,88 @@ loo.stanidm <-
       k_threshold <- 0.7
     }
 
+    has_quadrature <- x$has_quadrature
+
     # chain_id to pass to loo::relative_eff
     chain_id <- chain_id_for_loo(x)
 
-    ll <- log_lik.stanidm(x)
-    r_eff <- loo::relative_eff(exp(ll),
-                               chain_id = chain_id,
-                               cores = cores)
-    loo_x <-
-      suppressWarnings(loo.matrix(
-        ll,
-        r_eff = r_eff,
+    if(has_quadrature[1]){
+      ll <- log_lik.stanidm(x)
+      r_eff <- loo::relative_eff(exp(ll),
+                                 chain_id = chain_id,
+                                 cores = cores)
+      loo_x <-
+        suppressWarnings(loo.matrix(
+          ll,
+          r_eff = r_eff,
+          cores = cores,
+          save_psis = save_psis
+        ))
+    } else {
+      args <- ll_args(x)
+      llfun <- ll_fun(x)
+      likfun <- function(data_i, draws) {
+        exp(llfun(data_i, draws))
+      }
+
+      loo_x <- list()
+      for(n in seq_along(args$N) ) {
+        data_n = lapply(args , function(x) x[[n]] )$data
+        draws_n = lapply(args$draws , function(x) x[[n]] )
+
+
+      r_eff <- loo::relative_eff(
+        # using function method
+        x = likfun,
+        chain_id = chain_id,
+        data = data_n,
+        draws =  draws_n,
         cores = cores,
-        save_psis = save_psis
-      ))
+        ...
+      )
+      loo_x[[n]] <- suppressWarnings(
+        loo::loo.function(
+          llfun,
+          data = data_n,
+          draws = draws_n,
+          r_eff = r_eff,
+          ...,
+          cores = cores,
+          save_psis = save_psis
+        )
+      )
+      }
+
+      N <- sum(sapply(loo_x, function(l) attr(l, "dims")[2]) )
+      S <- attr(loo_x[[1]], "dims")[1]
+      pointwise <- lapply(loo_x, function(l) l$pointwise)
+      pointwise <- do.call(rbind, pointwise)
+      pareto_k <-  ulist( lapply(loo_x, function(l) l$diagnostics$pareto_k) )
+      n_eff <-  ulist( lapply(loo_x, function(l) l$diagnostics$n_eff) )
+      diagnostics <- nlist(pareto_k, n_eff)
+
+      estimates <- table_of_estimates(pointwise)
+
+      loo_x <- nlist(
+        estimates,
+        pointwise,
+        diagnostics,
+        psis_object = NULL,
+        elpd_loo = estimates[1,1],
+        p_loo = estimates[2,1],
+        looic = estimates[3,1],
+        se_elpd_loo = estimates[1,2],
+        se_p_loo = estimates[2,2],
+        se_looic = estimates[3,2]
+      )
+
+
+      loo_x <- structure(
+        loo_x,
+        dims =  c(S, N),
+        class = c("psis_loo", "loo")
+      )
+    }
 
     bad_obs <- loo::pareto_k_ids(loo_x, k_threshold)
     n_bad <- length(bad_obs)

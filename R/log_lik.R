@@ -72,70 +72,34 @@ log_lik.stanidm <- function(object, newdata = NULL, offset = NULL, m = NULL, ...
   calling_fun <- as.character(sys.call(-1))[1]
   dots <- list(...)
 
-  if (is.stansurv(object)) {
-    args <- ll_args.stansurv(object, newdata = newdata, ...)
-  } else {
-    args <- ll_args.stanidm(object, newdata = newdata, ...)
-    }
+  args <- ll_args.stanidm(object, newdata = newdata, ...)
 
   fun <- ll_fun(object, m = m)
-  if (is.stansurv(object)) {
-    out <-
-      vapply(
-        seq_len(args$N),
-        FUN.VALUE = numeric(length = args$S),
-        FUN = function(i) {
-          as.vector(fun(
-            draws = args$draws,
-            data_i = args$data[args$data$cids ==
-                                 unique(args$data$cids)[i], , drop = FALSE]
-          ))
-        }
-      )
 
-  } else if (is.stanidm(object) ) {
-    out <- list()
-      for(n in seq_along(args$N) ) {
-        args_n = lapply(args , function(x) x[[n]] )
-        draws_n = lapply(args$draws , function(x) x[[n]] )
-        args_n$draws = draws_n
-        out[[n]] <- vapply(
-          seq_len(args_n$N),
-          FUN.VALUE = numeric(length = args_n$S),
-          FUN = function(i) {
-            as.vector(fun(
-              draws = args_n$draws,
-              data_i = args_n$data[args_n$data$cids ==
-                                   unique(args_n$data$cids)[i], , drop = FALSE]
-            ))
-          })
-      }
-    out <- do.call(cbind, out)
-  } else {
-    out <- vapply(
-      seq_len(args$N),
+  out <- list()
+  for(n in seq_along(args$N) ) {
+    args_n = lapply(args , function(x) x[[n]] )
+    draws_n = lapply(args$draws , function(x) x[[n]] )
+    args_n$draws = draws_n
+    out[[n]] <- vapply(
+      seq_len(args_n$N),
+      FUN.VALUE = numeric(length = args_n$S),
       FUN = function(i) {
         as.vector(fun(
-          data_i = args$data[i, , drop = FALSE],
-          draws = args$draws
+          draws = args_n$draws,
+          data_i = args_n$data[args_n$data$cids ==
+                                 unique(args_n$data$cids)[i], , drop = FALSE]
         ))
-      },
-      FUN.VALUE = numeric(length = args$S)
-    )
+      })
   }
 
+  out <- do.call(cbind, out)
+
+
   if (is.null(newdata)) {
-    if(is.stanidm(object)) {
-      colnames(out) <- uapply(object$x, function(x) rownames(x))
-    } else {
-      colnames(out) <- rownames(model.frame(object, m = m))
-    }
+    colnames(out) <- uapply(object$x, function(x) rownames(x))
   } else {
-    if(is.stanidm(object)){
-      colnames(out) <- uapply(newdata, function(x) rownames(x))
-    } else {
-      colnames(out) <- rownames(newdata)
-    }
+    colnames(out) <- uapply(newdata, function(x) rownames(x))
   }
   return(out)
 }
@@ -191,7 +155,7 @@ log_lik.stanjm <- function(object, newdataLong = NULL, newdataEvent = NULL, ...)
 # @param x stanreg object
 # @return a function
 ll_fun <- function(x, m = NULL) {
-  validate_stanreg_object(x)
+ # validate_stanreg_object(x)
   f <- family(x, m = m)
   if (is.stansurv(x)) {
     return(.ll_surv_i)
@@ -976,7 +940,7 @@ ll_args.stanjm <- function(object, data, pars, m = 1,
   # non-zero value. Note that these times correspond to individuals where the,
   # event time (etimes) was zero, and therefore the cumhaz (at baseline) will
   # be forced to zero for these individuals further down in the code anyhow.
-  times[times == 0] <- 1E-10
+  times <- times[times > 0]
 
   # Linear predictor for the survival submodel
   e_eta <- linear_predictor(pars$ebeta, data$eXq)
